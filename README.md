@@ -18,7 +18,7 @@ Now the setup is running and can be use. Take care, that you have to connect to 
 - host1 
 
 
-#troubleshoot list i had to deal
+# Troubleshoot list i had to deal
 - I had the assumtion, that the default gateway handle automatically the ip route from differ subnet. It doesn't, see start.sh "sudo docker exec host1 ip route add default via 13.13.0.2" it fixed. It fix the routing issue.
 - Docker uses veth in order to create a NIC for a container, which create a wrong checksum. You can fix if you recompile the linux kernel (veth setting) or see in start.sh "sudo docker exec host0 ethtool -K eth1 rx off tx off". The second approach disable the checksum checking on the NIC. 
 - For some reason windows docker create a traffic noices in the network. I don't know why, but this noices blow up the cpu usage to 100%. I use linux now. So i don't have this behavoir. Perhebs the problem can be only on my windows maschine. 
