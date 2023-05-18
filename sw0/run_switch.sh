@@ -1,4 +1,4 @@
-cmd="simple_switch -i 0@eth1 -i 1@eth2 basic.bmv2/basic.json"
+cmd="simple_switch -i 0@eth1 -i 1@eth2 basic.p4.bmv2/basic.json"
 $cmd &
 
 sleep 2
