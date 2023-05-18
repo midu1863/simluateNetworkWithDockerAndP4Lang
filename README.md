@@ -10,7 +10,7 @@ Simple test to simulate a network with docker contaner and p4 lang switches. It 
 Now the setup is running and can be use. Take care, that you have to connect to the container via sudo docker exec -it {name} bash 
 
 
-## List of docker container it uses
+## List of docker container it uses {name}
 - sw0
 - sw1
 - sw2
