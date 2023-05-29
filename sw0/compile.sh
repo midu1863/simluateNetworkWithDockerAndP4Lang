@@ -1,1 +1,1 @@
-p4c -b bmv2 $1 -o $2.bmv2
+p4c -b bmv2 /p4c/$1 -o /p4c/$2

@@ -1,0 +1,25 @@
+How to use read
+http://ce.sc.edu/cyberinfra/workshops/internet2_pdp/3-registers.pdf
+
+why virtual interface doesn't calculate right checksum
+https://sudonull.com/post/90273-Linux-kernel-error-sends-corrupted-TCP-IP-packets-to-Mesos-Kubernetes-and-Docker-containers-ua-hosti
+
+how to disable checksum
+https://docs.gz.ro/tuning-network-cards-on-linux.html
+
+orher stuff:
+https://docs.docker.com/compose/compose-file/
+https://de.wikipedia.org/wiki/Address_Resolution_Protocol
+
+p4lang sources:
+https://bhg2.files.wordpress.com/2019/04/p4_tutorial.pdf
+https://hub.docker.com/r/p4lang/p4c
+https://github.com/p4lang
+https://p4.org/p4-spec/docs/P4-16-v1.2.3.pdf
+https://hikingandcoding.wordpress.com/2019/09/17/getting-started-with-p4/
+https://opennetworking.org/wp-content/uploads/2020/12/P4_D2_East_2018_02_p4runtime.pdf
+
+
+from supervisor:
+https://github.com/nsg-ethz/p4-learning
+hey saided i miss arp by my simple_forwarding

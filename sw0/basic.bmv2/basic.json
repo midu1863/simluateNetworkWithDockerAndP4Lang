@@ -227,7 +227,7 @@
       "name" : "deparser",
       "id" : 0,
       "source_info" : {
-        "filename" : "basic.p4",
+        "filename" : "/p4c/basic.p4",
         "line" : 196,
         "column" : 8,
         "source_fragment" : "MyDeparser"
@@ -244,7 +244,7 @@
       "name" : "calc",
       "id" : 0,
       "source_info" : {
-        "filename" : "basic.p4",
+        "filename" : "/p4c/basic.p4",
         "line" : 174,
         "column" : 8,
         "source_fragment" : "update_checksum( ..."
@@ -326,7 +326,7 @@
             }
           ],
           "source_info" : {
-            "filename" : "basic.p4",
+            "filename" : "/p4c/basic.p4",
             "line" : 111,
             "column" : 8,
             "source_fragment" : "mark_to_drop(standard_metadata)"
@@ -348,7 +348,7 @@
             }
           ],
           "source_info" : {
-            "filename" : "basic.p4",
+            "filename" : "/p4c/basic.p4",
             "line" : 111,
             "column" : 8,
             "source_fragment" : "mark_to_drop(standard_metadata)"
@@ -379,7 +379,7 @@
             }
           ],
           "source_info" : {
-            "filename" : "basic.p4",
+            "filename" : "/p4c/basic.p4",
             "line" : 115,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = port"
@@ -410,7 +410,7 @@
             }
           ],
           "source_info" : {
-            "filename" : "basic.p4",
+            "filename" : "/p4c/basic.p4",
             "line" : 132,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = port"
@@ -424,7 +424,7 @@
       "name" : "ingress",
       "id" : 0,
       "source_info" : {
-        "filename" : "basic.p4",
+        "filename" : "/p4c/basic.p4",
         "line" : 107,
         "column" : 8,
         "source_fragment" : "MyIngress"
@@ -435,7 +435,7 @@
           "name" : "MyIngress.ipv4_lpm",
           "id" : 0,
           "source_info" : {
-            "filename" : "basic.p4",
+            "filename" : "/p4c/basic.p4",
             "line" : 118,
             "column" : 10,
             "source_fragment" : "ipv4_lpm"
@@ -473,7 +473,7 @@
           "name" : "MyIngress.mac_exact",
           "id" : 1,
           "source_info" : {
-            "filename" : "basic.p4",
+            "filename" : "/p4c/basic.p4",
             "line" : 136,
             "column" : 10,
             "source_fragment" : "mac_exact"
@@ -514,7 +514,7 @@
           "name" : "node_2",
           "id" : 0,
           "source_info" : {
-            "filename" : "basic.p4",
+            "filename" : "/p4c/basic.p4",
             "line" : 149,
             "column" : 12,
             "source_fragment" : "hdr.ipv4.isValid()"
@@ -537,7 +537,7 @@
           "name" : "node_4",
           "id" : 1,
           "source_info" : {
-            "filename" : "basic.p4",
+            "filename" : "/p4c/basic.p4",
             "line" : 152,
             "column" : 12,
             "source_fragment" : "hdr.arp.isValid()"
@@ -562,7 +562,7 @@
       "name" : "egress",
       "id" : 1,
       "source_info" : {
-        "filename" : "basic.p4",
+        "filename" : "/p4c/basic.p4",
         "line" : 162,
         "column" : 8,
         "source_fragment" : "MyEgress"
@@ -578,7 +578,7 @@
       "name" : "cksum",
       "id" : 0,
       "source_info" : {
-        "filename" : "basic.p4",
+        "filename" : "/p4c/basic.p4",
         "line" : 174,
         "column" : 8,
         "source_fragment" : "update_checksum( ..."
@@ -641,7 +641,7 @@
       ["standard_metadata", "priority"]
     ]
   ],
-  "program" : "basic.bmv2/basic.p4i",
+  "program" : "/p4c/basic.bmv2/basic.p4i",
   "__meta__" : {
     "version" : [2, 23],
     "compiler" : "https://github.com/p4lang/p4c"

@@ -1,6 +1,6 @@
-# 1 "basic.p4"
+# 1 "creditBased.p4"
 # 1 "<built-in>" 1
-# 1 "basic.p4" 2
+# 1 "creditBased.p4" 2
 /* -*- P4_16 -*- */
 
 # 1 "/usr/local/share/p4c/p4include/core.p4" 1
@@ -97,7 +97,7 @@ extern bool static_assert(bool check, string message);
 
 /// Like the above but using a default message.
 extern bool static_assert(bool check);
-# 3 "basic.p4" 2
+# 3 "creditBased.p4" 2
 # 1 "/usr/local/share/p4c/p4include/v1model.p4" 1
 /*
 Copyright 2013-present Barefoot Networks, Inc.
@@ -856,10 +856,12 @@ package V1Switch<H, M>(Parser<H, M> p,
                        ComputeChecksum<H, M> ck,
                        Deparser<H> dep
                        );
-# 4 "basic.p4" 2
+# 4 "creditBased.p4" 2
 
 const bit<16> TYPE_IPV4 = 0x0800;
 const bit<16> TYPE_ARP = 0x0806;
+
+const bit<32> max_port_number = 2;
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
@@ -959,10 +961,15 @@ control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
 /*************************************************************************
 **************  I N G R E S S   P R O C E S S I N G   *******************
 *************************************************************************/
-
 control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
+
+    register<bit<32>>(2) credit_cards;
+
+
+
+
     action drop() {
         mark_to_drop(standard_metadata);
     }
@@ -1004,10 +1011,17 @@ control MyIngress(inout headers hdr,
     apply {
         if (hdr.ipv4.isValid()) {
             ipv4_lpm.apply();
+                bit<32> credit_card_index = (bit<32>) standard_metadata.ingress_port;
+                bit<32> credit_balance = 0;
+                credit_cards.read(credit_card_index);
+                //credit_cards.read(credit_balance, credit_card_index);
+                credit_cards.write(credit_card_index, credit_balance - 1 );
+            credit_cards.write(credit_card_index, credit_balance - 1 );
         }
         if (hdr.arp.isValid()) {
             mac_exact.apply();
         }
+
     }
 }
 

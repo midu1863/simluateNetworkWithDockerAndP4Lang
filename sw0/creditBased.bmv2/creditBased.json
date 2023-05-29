@@ -3,7 +3,14 @@
     {
       "name" : "scalars_0",
       "id" : 0,
-      "fields" : []
+      "fields" : [
+        ["tmp", 32, false],
+        ["tmp_0", 32, false],
+        ["tmp_1", 32, false],
+        ["tmp_2", 32, false],
+        ["tmp_3", 32, false],
+        ["credit_balance_0", 32, false]
+      ]
     },
     {
       "name" : "standard_metadata",
@@ -227,8 +234,8 @@
       "name" : "deparser",
       "id" : 0,
       "source_info" : {
-        "filename" : "basic.p4",
-        "line" : 196,
+        "filename" : "/p4c/creditBased.p4",
+        "line" : 209,
         "column" : 8,
         "source_fragment" : "MyDeparser"
       },
@@ -238,14 +245,27 @@
   ],
   "meter_arrays" : [],
   "counter_arrays" : [],
-  "register_arrays" : [],
+  "register_arrays" : [
+    {
+      "name" : "MyIngress.credit_cards",
+      "id" : 0,
+      "source_info" : {
+        "filename" : "/p4c/creditBased.p4",
+        "line" : 112,
+        "column" : 25,
+        "source_fragment" : "credit_cards"
+      },
+      "size" : 2,
+      "bitwidth" : 32
+    }
+  ],
   "calculations" : [
     {
       "name" : "calc",
       "id" : 0,
       "source_info" : {
-        "filename" : "basic.p4",
-        "line" : 174,
+        "filename" : "/p4c/creditBased.p4",
+        "line" : 187,
         "column" : 8,
         "source_fragment" : "update_checksum( ..."
       },
@@ -326,8 +346,8 @@
             }
           ],
           "source_info" : {
-            "filename" : "basic.p4",
-            "line" : 111,
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 118,
             "column" : 8,
             "source_fragment" : "mark_to_drop(standard_metadata)"
           }
@@ -348,8 +368,8 @@
             }
           ],
           "source_info" : {
-            "filename" : "basic.p4",
-            "line" : 111,
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 118,
             "column" : 8,
             "source_fragment" : "mark_to_drop(standard_metadata)"
           }
@@ -379,8 +399,8 @@
             }
           ],
           "source_info" : {
-            "filename" : "basic.p4",
-            "line" : 115,
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 122,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = port"
           }
@@ -410,10 +430,266 @@
             }
           ],
           "source_info" : {
-            "filename" : "basic.p4",
-            "line" : 132,
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 139,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = port"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "creditBased160",
+      "id" : 6,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "&",
+                  "left" : {
+                    "type" : "field",
+                    "value" : ["standard_metadata", "ingress_port"]
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0xffffffff"
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 160,
+            "column" : 50,
+            "source_fragment" : "credit_card_index"
+          }
+        },
+        {
+          "op" : "register_read",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "credit_balance_0"]
+            },
+            {
+              "type" : "register_array",
+              "value" : "MyIngress.credit_cards"
+            },
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 160,
+            "column" : 16,
+            "source_fragment" : "credit_cards.read(credit_balance, credit_card_index)"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "&",
+                  "left" : {
+                    "type" : "field",
+                    "value" : ["standard_metadata", "ingress_port"]
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0xffffffff"
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 161,
+            "column" : 35,
+            "source_fragment" : "credit_card_index"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_1"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "&",
+                  "left" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "+",
+                      "left" : {
+                        "type" : "field",
+                        "value" : ["scalars", "credit_balance_0"]
+                      },
+                      "right" : {
+                        "type" : "hexstr",
+                        "value" : "0xffffffff"
+                      }
+                    }
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0xffffffff"
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 161,
+            "column" : 54,
+            "source_fragment" : "credit_balance - 1"
+          }
+        },
+        {
+          "op" : "register_write",
+          "parameters" : [
+            {
+              "type" : "register_array",
+              "value" : "MyIngress.credit_cards"
+            },
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_0"]
+            },
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_1"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 161,
+            "column" : 16,
+            "source_fragment" : "credit_cards.write(credit_card_index, credit_balance - 1 )"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_2"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "&",
+                  "left" : {
+                    "type" : "field",
+                    "value" : ["standard_metadata", "ingress_port"]
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0xffffffff"
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 162,
+            "column" : 31,
+            "source_fragment" : "credit_card_index"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_3"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "&",
+                  "left" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "+",
+                      "left" : {
+                        "type" : "field",
+                        "value" : ["scalars", "credit_balance_0"]
+                      },
+                      "right" : {
+                        "type" : "hexstr",
+                        "value" : "0xffffffff"
+                      }
+                    }
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0xffffffff"
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 162,
+            "column" : 50,
+            "source_fragment" : "credit_balance - 1"
+          }
+        },
+        {
+          "op" : "register_write",
+          "parameters" : [
+            {
+              "type" : "register_array",
+              "value" : "MyIngress.credit_cards"
+            },
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_2"]
+            },
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp_3"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 162,
+            "column" : 12,
+            "source_fragment" : "credit_cards.write(credit_card_index, credit_balance - 1 )"
           }
         }
       ]
@@ -424,8 +700,8 @@
       "name" : "ingress",
       "id" : 0,
       "source_info" : {
-        "filename" : "basic.p4",
-        "line" : 107,
+        "filename" : "/p4c/creditBased.p4",
+        "line" : 108,
         "column" : 8,
         "source_fragment" : "MyIngress"
       },
@@ -435,8 +711,8 @@
           "name" : "MyIngress.ipv4_lpm",
           "id" : 0,
           "source_info" : {
-            "filename" : "basic.p4",
-            "line" : 118,
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 125,
             "column" : 10,
             "source_fragment" : "ipv4_lpm"
           },
@@ -456,11 +732,11 @@
           "direct_meters" : null,
           "action_ids" : [4, 2, 0],
           "actions" : ["MyIngress.ipv4_forward", "MyIngress.drop", "NoAction"],
-          "base_default_next" : "node_4",
+          "base_default_next" : "tbl_creditBased160",
           "next_tables" : {
-            "MyIngress.ipv4_forward" : "node_4",
-            "MyIngress.drop" : "node_4",
-            "NoAction" : "node_4"
+            "MyIngress.ipv4_forward" : "tbl_creditBased160",
+            "MyIngress.drop" : "tbl_creditBased160",
+            "NoAction" : "tbl_creditBased160"
           },
           "default_entry" : {
             "action_id" : 2,
@@ -470,11 +746,40 @@
           }
         },
         {
-          "name" : "MyIngress.mac_exact",
+          "name" : "tbl_creditBased160",
           "id" : 1,
           "source_info" : {
-            "filename" : "basic.p4",
-            "line" : 136,
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 160,
+            "column" : 16,
+            "source_fragment" : "credit_cards.read(credit_balance, credit_card_index); ..."
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [6],
+          "actions" : ["creditBased160"],
+          "base_default_next" : "node_5",
+          "next_tables" : {
+            "creditBased160" : "node_5"
+          },
+          "default_entry" : {
+            "action_id" : 6,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "MyIngress.mac_exact",
+          "id" : 2,
+          "source_info" : {
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 143,
             "column" : 10,
             "source_fragment" : "mac_exact"
           },
@@ -514,8 +819,8 @@
           "name" : "node_2",
           "id" : 0,
           "source_info" : {
-            "filename" : "basic.p4",
-            "line" : 149,
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 156,
             "column" : 12,
             "source_fragment" : "hdr.ipv4.isValid()"
           },
@@ -531,14 +836,14 @@
             }
           },
           "true_next" : "MyIngress.ipv4_lpm",
-          "false_next" : "node_4"
+          "false_next" : "node_5"
         },
         {
-          "name" : "node_4",
+          "name" : "node_5",
           "id" : 1,
           "source_info" : {
-            "filename" : "basic.p4",
-            "line" : 152,
+            "filename" : "/p4c/creditBased.p4",
+            "line" : 164,
             "column" : 12,
             "source_fragment" : "hdr.arp.isValid()"
           },
@@ -562,8 +867,8 @@
       "name" : "egress",
       "id" : 1,
       "source_info" : {
-        "filename" : "basic.p4",
-        "line" : 162,
+        "filename" : "/p4c/creditBased.p4",
+        "line" : 175,
         "column" : 8,
         "source_fragment" : "MyEgress"
       },
@@ -578,8 +883,8 @@
       "name" : "cksum",
       "id" : 0,
       "source_info" : {
-        "filename" : "basic.p4",
-        "line" : 174,
+        "filename" : "/p4c/creditBased.p4",
+        "line" : 187,
         "column" : 8,
         "source_fragment" : "update_checksum( ..."
       },
@@ -641,7 +946,7 @@
       ["standard_metadata", "priority"]
     ]
   ],
-  "program" : "basic.bmv2.bmv2/basic.p4i",
+  "program" : "/p4c/creditBased.bmv2/creditBased.p4i",
   "__meta__" : {
     "version" : [2, 23],
     "compiler" : "https://github.com/p4lang/p4c"
