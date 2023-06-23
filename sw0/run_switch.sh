@@ -1,7 +1,7 @@
-cmd="simple_switch -i 0@eth1 -i 1@eth2 creditBased.bmv2/creditBased.json"
+cmd="simple_switch -i 0@eth1 -i 1@eth2 $1.bmv2/$1.json"
 $cmd &
 
-sleep 5
+sleep 3
 
 simple_switch_CLI << EOF
 table_add MyIngress.mac_exact MyIngress.mac_forward 13.13.0.0/16 => 1

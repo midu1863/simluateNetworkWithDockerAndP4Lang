@@ -4,6 +4,8 @@
 
 const bit<16> TYPE_IPV4 = 0x0800;
 const bit<16> TYPE_ARP  = 0x0806;
+
+const bit<32> max_port_number = 2;
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
@@ -17,6 +19,13 @@ header ethernet_t {
     macAddr_t dstAddr;
     macAddr_t srcAddr;
     bit<16>   etherType;
+}
+
+header cup_t {
+    bit<32>  srcSwitchId;
+    bit<32>  dstSwitchId;
+    bit<32>  opCode;         //0 ask, 1 response, 2 update new credit, 3 break connection
+    bit<32>  creditValue;
 }
 
 header arp_t {
@@ -47,19 +56,32 @@ header ipv4_t {
     ip4Addr_t dstAddr;
 }
 
-header test_t {
-    bit<32> ff;
-}
+
 
 struct metadata {
-    /* empty */
+    bit<9>  ingress_port;
+    bit<9>  egress_spec;
+    bit<9>  egress_port;
+    bit<32> instance_type;
+    bit<32> packet_length;
+    bit<32> enq_timestamp;
+    bit<19> enq_qdepth;
+    bit<32> deq_timedelta;
+    bit<19> deq_qdepth;
+    bit<48> ingress_global_timestamp;
+    bit<48> egress_global_timestamp;
+    bit<16> mcast_grp;
+    bit<16> egress_rid;
+    bit<1>  checksum_error;
+    error   parser_error;
+    bit<3>  priority;
 }
 
 struct headers {
     ethernet_t  ethernet;
     arp_t       arp;
-    test_t      tt;
     ipv4_t      ipv4;
+    cup_t       cup;
 }
 
 /*************************************************************************
@@ -91,6 +113,10 @@ parser MyParser(packet_in packet,
 
     state parse_ipv4 {
         packet.extract(hdr.ipv4);
+        if(hdr.ipv4.ihl == 9) {
+            packet.extract(hdr.cup);
+        }
+
         transition accept;
     }
 
@@ -108,16 +134,25 @@ control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
 /*************************************************************************
 **************  I N G R E S S   P R O C E S S I N G   *******************
 *************************************************************************/
-
 control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
+    register<bit<48>>(10) debug;
+
+
+
+
     action drop() {
         mark_to_drop(standard_metadata);
     }
 
+    action credited_based_forward() {
+
+    }
     action ipv4_forward(egressSpec_t port) {
         standard_metadata.egress_spec = port;
+        debug.write(0,standard_metadata.ingress_global_timestamp);
+        credited_based_forward();
     }
 
     table ipv4_lpm {
@@ -168,10 +203,11 @@ control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {
     apply {
-        if (hdr.ipv4.isValid()) {
-            //hdr.ipv4.setInvalid();
-            //hdr.tt.setValid();
-            //hdr.tt.ff = 4294967295;
+        if(hdr.cup.isValid()) {
+            hdr.ipv4.ihl=5;
+            hdr.ipv4.totalLen = hdr.ipv4.totalLen - 12;
+            hdr.cup.setInvalid();
+            hdr.ipv4.totalLen = hdr.ipv4.totalLen - 4;
         }
     }
 }
@@ -211,9 +247,8 @@ control MyDeparser(packet_out packet, in headers hdr) {
     apply {
             packet.emit(hdr.ethernet);
             packet.emit(hdr.arp);
-            packet.emit(hdr.tt);
             packet.emit(hdr.ipv4);
-
+            packet.emit(hdr.cup);
     }
 }
 
@@ -229,3 +264,4 @@ MyEgress(),
 MyComputeChecksum(),
 MyDeparser()
 ) main;
+

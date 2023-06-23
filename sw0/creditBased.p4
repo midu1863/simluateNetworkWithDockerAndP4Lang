@@ -21,6 +21,13 @@ header ethernet_t {
     bit<16>   etherType;
 }
 
+header cup_t {
+    bit<8>  srcSwitchId;
+    bit<8>  dstSwitchId;
+    bit<4>  opCode;         //0 ask, 1 response, 2 update new credit, 3 break connection
+    bit<32> creditValue;
+}
+
 header arp_t {
     bit<16>   hwType;
     bit<16>   protocalType;
@@ -49,8 +56,25 @@ header ipv4_t {
     ip4Addr_t dstAddr;
 }
 
+
+
 struct metadata {
-    /* empty */
+    bit<9>  ingress_port;
+    bit<9>  egress_spec;
+    bit<9>  egress_port;
+    bit<32> instance_type;
+    bit<32> packet_length;
+    bit<32> enq_timestamp;
+    bit<19> enq_qdepth;
+    bit<32> deq_timedelta;
+    bit<19> deq_qdepth;
+    bit<48> ingress_global_timestamp;
+    bit<48> egress_global_timestamp;
+    bit<16> mcast_grp;
+    bit<16> egress_rid;
+    bit<1>  checksum_error;
+    error   parser_error;
+    bit<3>  priority;
 }
 
 struct headers {
@@ -110,6 +134,7 @@ control MyIngress(inout headers hdr,
                   inout standard_metadata_t standard_metadata) {
 
     register<bit<32>>(max_port_number) credit_cards;
+    register<bit<48>>(10) debug;
 
 
 
@@ -118,8 +143,13 @@ control MyIngress(inout headers hdr,
         mark_to_drop(standard_metadata);
     }
 
+    action credited_based_forward() {
+
+    }
     action ipv4_forward(egressSpec_t port) {
         standard_metadata.egress_spec = port;
+        debug.write(0,standard_metadata.ingress_global_timestamp);
+        credited_based_forward();
     }
 
     table ipv4_lpm {
@@ -155,16 +185,10 @@ control MyIngress(inout headers hdr,
     apply {
         if (hdr.ipv4.isValid()) {
             ipv4_lpm.apply();
-                bit<32> credit_card_index = (bit<32>) standard_metadata.ingress_port;
-                bit<32> credit_balance = 0;
-                credit_cards.read(credit_balance, credit_card_index);
-                credit_cards.write(credit_card_index, credit_balance  - 1 );
-            credit_cards.write(credit_card_index, credit_balance  - 1 );
         }
         if (hdr.arp.isValid()) {
             mac_exact.apply();
         }
-
     }
 }
 
@@ -175,7 +199,15 @@ control MyIngress(inout headers hdr,
 control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {
-    apply {  }
+    apply {
+        if(hdr.ipv4.isValid()) {
+            hdr.cup.setValid();
+            hdr.cup.srcSwitchId = 255;
+            hdr.cup.dstSwitchId = 255;
+            hdr.cup.opCode = 16;         //0 ask, 1 response, 2 update new credit, 3 break connection
+            hdr.cup.creditValue = 4294967295;
+        }
+    }
 }
 
 /*************************************************************************

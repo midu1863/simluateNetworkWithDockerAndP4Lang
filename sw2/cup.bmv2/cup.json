@@ -4,14 +4,7 @@
       "name" : "scalars_0",
       "id" : 0,
       "fields" : [
-        ["tmp", 32, false],
-        ["tmp_0", 32, false],
-        ["tmp_1", 32, false],
-        ["tmp_2", 32, false],
-        ["tmp_3", 32, false],
-        ["tmp_4", 32, false],
-        ["credit_balance_ingress_0", 32, false],
-        ["credit_balance_egress_0", 32, false],
+        ["tmp", 1, false],
         ["metadata.ingress_port", 9, false],
         ["metadata.egress_spec", 9, false],
         ["metadata.egress_port", 9, false],
@@ -28,7 +21,7 @@
         ["metadata.checksum_error", 1, false],
         ["metadata.parser_error", 32, false],
         ["metadata.priority", 3, false],
-        ["_padding_0", 3, false]
+        ["_padding_0", 2, false]
       ]
     },
     {
@@ -95,6 +88,16 @@
         ["srcAddr", 32, false],
         ["dstAddr", 32, false]
       ]
+    },
+    {
+      "name" : "cup_t",
+      "id" : 5,
+      "fields" : [
+        ["srcSwitchId", 32, false],
+        ["dstSwitchId", 32, false],
+        ["opCode", 32, false],
+        ["creditValue", 32, false]
+      ]
     }
   ],
   "headers" : [
@@ -130,6 +133,13 @@
       "name" : "ipv4",
       "id" : 4,
       "header_type" : "ipv4_t",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "cup",
+      "id" : 5,
+      "header_type" : "cup_t",
       "metadata" : false,
       "pi_omit" : true
     }
@@ -232,8 +242,97 @@
                 }
               ],
               "op" : "extract"
+            },
+            {
+              "parameters" : [
+                {
+                  "type" : "field",
+                  "value" : ["scalars", "tmp"]
+                },
+                {
+                  "type" : "expression",
+                  "value" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "?",
+                      "left" : {
+                        "type" : "hexstr",
+                        "value" : "0x01"
+                      },
+                      "right" : {
+                        "type" : "hexstr",
+                        "value" : "0x00"
+                      },
+                      "cond" : {
+                        "type" : "expression",
+                        "value" : {
+                          "op" : "==",
+                          "left" : {
+                            "type" : "field",
+                            "value" : ["ipv4", "ihl"]
+                          },
+                          "right" : {
+                            "type" : "hexstr",
+                            "value" : "0x09"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "op" : "set"
             }
           ],
+          "transitions" : [
+            {
+              "type" : "hexstr",
+              "value" : "0x01",
+              "mask" : null,
+              "next_state" : "parse_ipv4_true"
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x00",
+              "mask" : null,
+              "next_state" : "parse_ipv4_join"
+            }
+          ],
+          "transition_key" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp"]
+            }
+          ]
+        },
+        {
+          "name" : "parse_ipv4_true",
+          "id" : 3,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "cup"
+                }
+              ],
+              "op" : "extract"
+            }
+          ],
+          "transitions" : [
+            {
+              "type" : "default",
+              "value" : null,
+              "mask" : null,
+              "next_state" : "parse_ipv4_join"
+            }
+          ],
+          "transition_key" : []
+        },
+        {
+          "name" : "parse_ipv4_join",
+          "id" : 4,
+          "parser_ops" : [],
           "transitions" : [
             {
               "type" : "default",
@@ -253,12 +352,12 @@
       "name" : "deparser",
       "id" : 0,
       "source_info" : {
-        "filename" : "/p4c/creditBased.p4",
-        "line" : 254,
+        "filename" : "/p4c/cup.p4",
+        "line" : 243,
         "column" : 8,
         "source_fragment" : "MyDeparser"
       },
-      "order" : ["ethernet", "arp", "ipv4"],
+      "order" : ["ethernet", "arp", "ipv4", "cup"],
       "primitives" : []
     }
   ],
@@ -266,23 +365,11 @@
   "counter_arrays" : [],
   "register_arrays" : [
     {
-      "name" : "MyIngress.credit_cards",
+      "name" : "MyIngress.debug",
       "id" : 0,
       "source_info" : {
-        "filename" : "/p4c/creditBased.p4",
-        "line" : 134,
-        "column" : 39,
-        "source_fragment" : "credit_cards"
-      },
-      "size" : 2,
-      "bitwidth" : 32
-    },
-    {
-      "name" : "MyIngress.debug",
-      "id" : 1,
-      "source_info" : {
-        "filename" : "/p4c/creditBased.p4",
-        "line" : 135,
+        "filename" : "/p4c/cup.p4",
+        "line" : 140,
         "column" : 26,
         "source_fragment" : "debug"
       },
@@ -295,8 +382,8 @@
       "name" : "calc",
       "id" : 0,
       "source_info" : {
-        "filename" : "/p4c/creditBased.p4",
-        "line" : 232,
+        "filename" : "/p4c/cup.p4",
+        "line" : 221,
         "column" : 8,
         "source_fragment" : "update_checksum( ..."
       },
@@ -377,8 +464,8 @@
             }
           ],
           "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 141,
+            "filename" : "/p4c/cup.p4",
+            "line" : 146,
             "column" : 8,
             "source_fragment" : "mark_to_drop(standard_metadata)"
           }
@@ -399,30 +486,8 @@
             }
           ],
           "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 141,
-            "column" : 8,
-            "source_fragment" : "mark_to_drop(standard_metadata)"
-          }
-        }
-      ]
-    },
-    {
-      "name" : "MyIngress.drop",
-      "id" : 4,
-      "runtime_data" : [],
-      "primitives" : [
-        {
-          "op" : "mark_to_drop",
-          "parameters" : [
-            {
-              "type" : "header",
-              "value" : "standard_metadata"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 141,
+            "filename" : "/p4c/cup.p4",
+            "line" : 146,
             "column" : 8,
             "source_fragment" : "mark_to_drop(standard_metadata)"
           }
@@ -431,7 +496,7 @@
     },
     {
       "name" : "MyIngress.ipv4_forward",
-      "id" : 5,
+      "id" : 4,
       "runtime_data" : [
         {
           "name" : "port",
@@ -452,8 +517,8 @@
             }
           ],
           "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 148,
+            "filename" : "/p4c/cup.p4",
+            "line" : 153,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = port"
           }
@@ -475,8 +540,8 @@
             }
           ],
           "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 149,
+            "filename" : "/p4c/cup.p4",
+            "line" : 154,
             "column" : 8,
             "source_fragment" : "debug.write(0,standard_metadata.ingress_global_timestamp)"
           }
@@ -485,7 +550,7 @@
     },
     {
       "name" : "MyIngress.mac_forward",
-      "id" : 6,
+      "id" : 5,
       "runtime_data" : [
         {
           "name" : "port",
@@ -506,8 +571,8 @@
             }
           ],
           "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 167,
+            "filename" : "/p4c/cup.p4",
+            "line" : 172,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = port"
           }
@@ -515,8 +580,8 @@
       ]
     },
     {
-      "name" : "creditBased199",
-      "id" : 7,
+      "name" : "cup207",
+      "id" : 6,
       "runtime_data" : [],
       "primitives" : [
         {
@@ -524,31 +589,18 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["scalars", "tmp"]
+              "value" : ["ipv4", "ihl"]
             },
             {
-              "type" : "expression",
-              "value" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "&",
-                  "left" : {
-                    "type" : "field",
-                    "value" : ["standard_metadata", "ingress_port"]
-                  },
-                  "right" : {
-                    "type" : "hexstr",
-                    "value" : "0xffffffff"
-                  }
-                }
-              }
+              "type" : "hexstr",
+              "value" : "0x05"
             }
           ],
           "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 199,
-            "column" : 35,
-            "source_fragment" : "credit_card_index_ingress"
+            "filename" : "/p4c/cup.p4",
+            "line" : 207,
+            "column" : 12,
+            "source_fragment" : "hdr.ipv4.ihl=5"
           }
         },
         {
@@ -556,7 +608,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["scalars", "tmp_0"]
+              "value" : ["ipv4", "totalLen"]
             },
             {
               "type" : "expression",
@@ -570,50 +622,42 @@
                       "op" : "+",
                       "left" : {
                         "type" : "field",
-                        "value" : ["scalars", "credit_balance_ingress_0"]
+                        "value" : ["ipv4", "totalLen"]
                       },
                       "right" : {
                         "type" : "hexstr",
-                        "value" : "0xffffffff"
+                        "value" : "0xfff4"
                       }
                     }
                   },
                   "right" : {
                     "type" : "hexstr",
-                    "value" : "0xffffffff"
+                    "value" : "0xffff"
                   }
                 }
               }
             }
           ],
           "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 199,
-            "column" : 62,
-            "source_fragment" : "credit_balance_ingress - 1"
+            "filename" : "/p4c/cup.p4",
+            "line" : 208,
+            "column" : 12,
+            "source_fragment" : "hdr.ipv4.totalLen = hdr.ipv4.totalLen - 12"
           }
         },
         {
-          "op" : "register_write",
+          "op" : "remove_header",
           "parameters" : [
             {
-              "type" : "register_array",
-              "value" : "MyIngress.credit_cards"
-            },
-            {
-              "type" : "field",
-              "value" : ["scalars", "tmp"]
-            },
-            {
-              "type" : "field",
-              "value" : ["scalars", "tmp_0"]
+              "type" : "header",
+              "value" : "cup"
             }
           ],
           "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 199,
-            "column" : 16,
-            "source_fragment" : "credit_cards.write(credit_card_index_ingress, credit_balance_ingress - 1 )"
+            "filename" : "/p4c/cup.p4",
+            "line" : 209,
+            "column" : 12,
+            "source_fragment" : "hdr.cup.setInvalid()"
           }
         },
         {
@@ -621,39 +665,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["scalars", "tmp_1"]
-            },
-            {
-              "type" : "expression",
-              "value" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "&",
-                  "left" : {
-                    "type" : "field",
-                    "value" : ["standard_metadata", "egress_port"]
-                  },
-                  "right" : {
-                    "type" : "hexstr",
-                    "value" : "0xffffffff"
-                  }
-                }
-              }
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 200,
-            "column" : 35,
-            "source_fragment" : "credit_card_index_egress"
-          }
-        },
-        {
-          "op" : "assign",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["scalars", "tmp_2"]
+              "value" : ["ipv4", "totalLen"]
             },
             {
               "type" : "expression",
@@ -667,167 +679,27 @@
                       "op" : "+",
                       "left" : {
                         "type" : "field",
-                        "value" : ["scalars", "credit_balance_egress_0"]
+                        "value" : ["ipv4", "totalLen"]
                       },
                       "right" : {
                         "type" : "hexstr",
-                        "value" : "0xffffffff"
+                        "value" : "0xfffc"
                       }
                     }
                   },
                   "right" : {
                     "type" : "hexstr",
-                    "value" : "0xffffffff"
+                    "value" : "0xffff"
                   }
                 }
               }
             }
           ],
           "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 200,
-            "column" : 62,
-            "source_fragment" : "credit_balance_egress - 1"
-          }
-        },
-        {
-          "op" : "register_write",
-          "parameters" : [
-            {
-              "type" : "register_array",
-              "value" : "MyIngress.credit_cards"
-            },
-            {
-              "type" : "field",
-              "value" : ["scalars", "tmp_1"]
-            },
-            {
-              "type" : "field",
-              "value" : ["scalars", "tmp_2"]
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 200,
-            "column" : 16,
-            "source_fragment" : "credit_cards.write(credit_card_index_egress , credit_balance_egress - 1 )"
-          }
-        }
-      ]
-    },
-    {
-      "name" : "creditBased194",
-      "id" : 8,
-      "runtime_data" : [],
-      "primitives" : [
-        {
-          "op" : "assign",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["scalars", "tmp_3"]
-            },
-            {
-              "type" : "expression",
-              "value" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "&",
-                  "left" : {
-                    "type" : "field",
-                    "value" : ["standard_metadata", "ingress_port"]
-                  },
-                  "right" : {
-                    "type" : "hexstr",
-                    "value" : "0xffffffff"
-                  }
-                }
-              }
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 194,
-            "column" : 54,
-            "source_fragment" : "credit_card_index_ingress"
-          }
-        },
-        {
-          "op" : "register_read",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["scalars", "credit_balance_ingress_0"]
-            },
-            {
-              "type" : "register_array",
-              "value" : "MyIngress.credit_cards"
-            },
-            {
-              "type" : "field",
-              "value" : ["scalars", "tmp_3"]
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 194,
+            "filename" : "/p4c/cup.p4",
+            "line" : 210,
             "column" : 12,
-            "source_fragment" : "credit_cards.read(credit_balance_ingress, credit_card_index_ingress)"
-          }
-        },
-        {
-          "op" : "assign",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["scalars", "tmp_4"]
-            },
-            {
-              "type" : "expression",
-              "value" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "&",
-                  "left" : {
-                    "type" : "field",
-                    "value" : ["standard_metadata", "egress_port"]
-                  },
-                  "right" : {
-                    "type" : "hexstr",
-                    "value" : "0xffffffff"
-                  }
-                }
-              }
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 195,
-            "column" : 54,
-            "source_fragment" : "credit_card_index_egress"
-          }
-        },
-        {
-          "op" : "register_read",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["scalars", "credit_balance_egress_0"]
-            },
-            {
-              "type" : "register_array",
-              "value" : "MyIngress.credit_cards"
-            },
-            {
-              "type" : "field",
-              "value" : ["scalars", "tmp_4"]
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 195,
-            "column" : 12,
-            "source_fragment" : "credit_cards.read(credit_balance_egress , credit_card_index_egress)"
+            "source_fragment" : "hdr.ipv4.totalLen = hdr.ipv4.totalLen - 4"
           }
         }
       ]
@@ -838,77 +710,19 @@
       "name" : "ingress",
       "id" : 0,
       "source_info" : {
-        "filename" : "/p4c/creditBased.p4",
-        "line" : 130,
+        "filename" : "/p4c/cup.p4",
+        "line" : 137,
         "column" : 8,
         "source_fragment" : "MyIngress"
       },
       "init_table" : "node_2",
       "tables" : [
         {
-          "name" : "tbl_creditBased194",
+          "name" : "MyIngress.ipv4_lpm",
           "id" : 0,
           "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 194,
-            "column" : 12,
-            "source_fragment" : "credit_cards.read(credit_balance_ingress, credit_card_index_ingress); ..."
-          },
-          "key" : [],
-          "match_type" : "exact",
-          "type" : "simple",
-          "max_size" : 1024,
-          "with_counters" : false,
-          "support_timeout" : false,
-          "direct_meters" : null,
-          "action_ids" : [8],
-          "actions" : ["creditBased194"],
-          "base_default_next" : "node_4",
-          "next_tables" : {
-            "creditBased194" : "node_4"
-          },
-          "default_entry" : {
-            "action_id" : 8,
-            "action_const" : true,
-            "action_data" : [],
-            "action_entry_const" : true
-          }
-        },
-        {
-          "name" : "tbl_creditBased199",
-          "id" : 1,
-          "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 199,
-            "column" : 16,
-            "source_fragment" : "credit_cards.write(credit_card_index_ingress, credit_balance_ingress - 1 ); ..."
-          },
-          "key" : [],
-          "match_type" : "exact",
-          "type" : "simple",
-          "max_size" : 1024,
-          "with_counters" : false,
-          "support_timeout" : false,
-          "direct_meters" : null,
-          "action_ids" : [7],
-          "actions" : ["creditBased199"],
-          "base_default_next" : "MyIngress.ipv4_lpm",
-          "next_tables" : {
-            "creditBased199" : "MyIngress.ipv4_lpm"
-          },
-          "default_entry" : {
-            "action_id" : 7,
-            "action_const" : true,
-            "action_data" : [],
-            "action_entry_const" : true
-          }
-        },
-        {
-          "name" : "MyIngress.ipv4_lpm",
-          "id" : 2,
-          "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 153,
+            "filename" : "/p4c/cup.p4",
+            "line" : 158,
             "column" : 10,
             "source_fragment" : "ipv4_lpm"
           },
@@ -926,13 +740,13 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [5, 2, 0],
+          "action_ids" : [4, 2, 0],
           "actions" : ["MyIngress.ipv4_forward", "MyIngress.drop", "NoAction"],
-          "base_default_next" : "node_8",
+          "base_default_next" : "node_4",
           "next_tables" : {
-            "MyIngress.ipv4_forward" : "node_8",
-            "MyIngress.drop" : "node_8",
-            "NoAction" : "node_8"
+            "MyIngress.ipv4_forward" : "node_4",
+            "MyIngress.drop" : "node_4",
+            "NoAction" : "node_4"
           },
           "default_entry" : {
             "action_id" : 2,
@@ -942,40 +756,11 @@
           }
         },
         {
-          "name" : "tbl_drop",
-          "id" : 3,
-          "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 204,
-            "column" : 16,
-            "source_fragment" : "drop()"
-          },
-          "key" : [],
-          "match_type" : "exact",
-          "type" : "simple",
-          "max_size" : 1024,
-          "with_counters" : false,
-          "support_timeout" : false,
-          "direct_meters" : null,
-          "action_ids" : [4],
-          "actions" : ["MyIngress.drop"],
-          "base_default_next" : "node_8",
-          "next_tables" : {
-            "MyIngress.drop" : "node_8"
-          },
-          "default_entry" : {
-            "action_id" : 4,
-            "action_const" : true,
-            "action_data" : [],
-            "action_entry_const" : true
-          }
-        },
-        {
           "name" : "MyIngress.mac_exact",
-          "id" : 4,
+          "id" : 1,
           "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 171,
+            "filename" : "/p4c/cup.p4",
+            "line" : 176,
             "column" : 10,
             "source_fragment" : "mac_exact"
           },
@@ -993,7 +778,7 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [6, 3, 1],
+          "action_ids" : [5, 3, 1],
           "actions" : ["MyIngress.mac_forward", "MyIngress.drop", "NoAction"],
           "base_default_next" : null,
           "next_tables" : {
@@ -1015,8 +800,8 @@
           "name" : "node_2",
           "id" : 0,
           "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 184,
+            "filename" : "/p4c/cup.p4",
+            "line" : 189,
             "column" : 12,
             "source_fragment" : "hdr.ipv4.isValid()"
           },
@@ -1031,61 +816,15 @@
               }
             }
           },
-          "true_next" : "tbl_creditBased194",
-          "false_next" : "node_8"
+          "true_next" : "MyIngress.ipv4_lpm",
+          "false_next" : "node_4"
         },
         {
           "name" : "node_4",
           "id" : 1,
           "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 198,
-            "column" : 16,
-            "source_fragment" : "credit_balance_ingress > 0 && credit_balance_egress > 0"
-          },
-          "expression" : {
-            "type" : "expression",
-            "value" : {
-              "op" : "and",
-              "left" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : ">",
-                  "left" : {
-                    "type" : "field",
-                    "value" : ["scalars", "credit_balance_ingress_0"]
-                  },
-                  "right" : {
-                    "type" : "hexstr",
-                    "value" : "0x00000000"
-                  }
-                }
-              },
-              "right" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : ">",
-                  "left" : {
-                    "type" : "field",
-                    "value" : ["scalars", "credit_balance_egress_0"]
-                  },
-                  "right" : {
-                    "type" : "hexstr",
-                    "value" : "0x00000000"
-                  }
-                }
-              }
-            }
-          },
-          "true_next" : "tbl_creditBased199",
-          "false_next" : "tbl_drop"
-        },
-        {
-          "name" : "node_8",
-          "id" : 2,
-          "source_info" : {
-            "filename" : "/p4c/creditBased.p4",
-            "line" : 208,
+            "filename" : "/p4c/cup.p4",
+            "line" : 192,
             "column" : 12,
             "source_fragment" : "hdr.arp.isValid()"
           },
@@ -1109,15 +848,69 @@
       "name" : "egress",
       "id" : 1,
       "source_info" : {
-        "filename" : "/p4c/creditBased.p4",
-        "line" : 220,
+        "filename" : "/p4c/cup.p4",
+        "line" : 202,
         "column" : 8,
         "source_fragment" : "MyEgress"
       },
-      "init_table" : null,
-      "tables" : [],
+      "init_table" : "node_8",
+      "tables" : [
+        {
+          "name" : "tbl_cup207",
+          "id" : 2,
+          "source_info" : {
+            "filename" : "/p4c/cup.p4",
+            "line" : 207,
+            "column" : 24,
+            "source_fragment" : "=5; ..."
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [6],
+          "actions" : ["cup207"],
+          "base_default_next" : null,
+          "next_tables" : {
+            "cup207" : null
+          },
+          "default_entry" : {
+            "action_id" : 6,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        }
+      ],
       "action_profiles" : [],
-      "conditionals" : []
+      "conditionals" : [
+        {
+          "name" : "node_8",
+          "id" : 2,
+          "source_info" : {
+            "filename" : "/p4c/cup.p4",
+            "line" : 206,
+            "column" : 11,
+            "source_fragment" : "hdr.cup.isValid()"
+          },
+          "expression" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "d2b",
+              "left" : null,
+              "right" : {
+                "type" : "field",
+                "value" : ["cup", "$valid$"]
+              }
+            }
+          },
+          "false_next" : null,
+          "true_next" : "tbl_cup207"
+        }
+      ]
     }
   ],
   "checksums" : [
@@ -1125,8 +918,8 @@
       "name" : "cksum",
       "id" : 0,
       "source_info" : {
-        "filename" : "/p4c/creditBased.p4",
-        "line" : 232,
+        "filename" : "/p4c/cup.p4",
+        "line" : 221,
         "column" : 8,
         "source_fragment" : "update_checksum( ..."
       },
@@ -1188,7 +981,7 @@
       ["standard_metadata", "priority"]
     ]
   ],
-  "program" : "/p4c/creditBased.bmv2/creditBased.p4i",
+  "program" : "/p4c/cup.bmv2/cup.p4i",
   "__meta__" : {
     "version" : [2, 23],
     "compiler" : "https://github.com/p4lang/p4c"

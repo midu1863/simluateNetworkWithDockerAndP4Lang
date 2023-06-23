@@ -903,6 +903,10 @@ header ipv4_t {
     ip4Addr_t dstAddr;
 }
 
+header test_t {
+    bit<32> ff;
+}
+
 struct metadata {
     /* empty */
 }
@@ -910,6 +914,7 @@ struct metadata {
 struct headers {
     ethernet_t ethernet;
     arp_t arp;
+    test_t tt;
     ipv4_t ipv4;
 }
 
@@ -1018,7 +1023,13 @@ control MyIngress(inout headers hdr,
 control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {
-    apply { }
+    apply {
+        if (hdr.ipv4.isValid()) {
+            //hdr.ipv4.setInvalid();
+            //hdr.tt.setValid();
+            //hdr.tt.ff = 4294967295;
+        }
+    }
 }
 
 /*************************************************************************
@@ -1056,6 +1067,7 @@ control MyDeparser(packet_out packet, in headers hdr) {
     apply {
             packet.emit(hdr.ethernet);
             packet.emit(hdr.arp);
+            packet.emit(hdr.tt);
             packet.emit(hdr.ipv4);
 
     }

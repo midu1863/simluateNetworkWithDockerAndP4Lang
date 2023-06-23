@@ -3,7 +3,25 @@
     {
       "name" : "scalars_0",
       "id" : 0,
-      "fields" : []
+      "fields" : [
+        ["metadata.ingress_port", 9, false],
+        ["metadata.egress_spec", 9, false],
+        ["metadata.egress_port", 9, false],
+        ["metadata.instance_type", 32, false],
+        ["metadata.packet_length", 32, false],
+        ["metadata.enq_timestamp", 32, false],
+        ["metadata.enq_qdepth", 19, false],
+        ["metadata.deq_timedelta", 32, false],
+        ["metadata.deq_qdepth", 19, false],
+        ["metadata.ingress_global_timestamp", 48, false],
+        ["metadata.egress_global_timestamp", 48, false],
+        ["metadata.mcast_grp", 16, false],
+        ["metadata.egress_rid", 16, false],
+        ["metadata.checksum_error", 1, false],
+        ["metadata.parser_error", 32, false],
+        ["metadata.priority", 3, false],
+        ["_padding_0", 3, false]
+      ]
     },
     {
       "name" : "standard_metadata",
@@ -53,8 +71,18 @@
       ]
     },
     {
-      "name" : "ipv4_t",
+      "name" : "cup_t",
       "id" : 4,
+      "fields" : [
+        ["srcSwitchId", 32, false],
+        ["dstSwitchId", 32, false],
+        ["opCode", 32, false],
+        ["creditValue", 32, false]
+      ]
+    },
+    {
+      "name" : "ipv4_t",
+      "id" : 5,
       "fields" : [
         ["version", 4, false],
         ["ihl", 4, false],
@@ -101,8 +129,15 @@
       "pi_omit" : true
     },
     {
-      "name" : "ipv4",
+      "name" : "cup",
       "id" : 4,
+      "header_type" : "cup_t",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "ipv4",
+      "id" : 5,
       "header_type" : "ipv4_t",
       "metadata" : false,
       "pi_omit" : true
@@ -227,19 +262,90 @@
       "name" : "deparser",
       "id" : 0,
       "source_info" : {
-        "filename" : "basic.p4",
-        "line" : 196,
+        "filename" : "/p4c/cup.p4",
+        "line" : 234,
         "column" : 8,
         "source_fragment" : "MyDeparser"
       },
-      "order" : ["ethernet", "arp", "ipv4"],
+      "order" : ["ethernet", "arp", "ipv4", "cup"],
       "primitives" : []
     }
   ],
   "meter_arrays" : [],
   "counter_arrays" : [],
-  "register_arrays" : [],
-  "calculations" : [],
+  "register_arrays" : [
+    {
+      "name" : "MyIngress.debug",
+      "id" : 0,
+      "source_info" : {
+        "filename" : "/p4c/cup.p4",
+        "line" : 136,
+        "column" : 26,
+        "source_fragment" : "debug"
+      },
+      "size" : 10,
+      "bitwidth" : 48
+    }
+  ],
+  "calculations" : [
+    {
+      "name" : "calc",
+      "id" : 0,
+      "source_info" : {
+        "filename" : "/p4c/cup.p4",
+        "line" : 212,
+        "column" : 8,
+        "source_fragment" : "update_checksum( ..."
+      },
+      "algo" : "csum16",
+      "input" : [
+        {
+          "type" : "field",
+          "value" : ["ipv4", "version"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ipv4", "ihl"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ipv4", "diffserv"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ipv4", "totalLen"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ipv4", "identification"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ipv4", "flags"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ipv4", "fragOffset"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ipv4", "ttl"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ipv4", "protocol"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ipv4", "srcAddr"]
+        },
+        {
+          "type" : "field",
+          "value" : ["ipv4", "dstAddr"]
+        }
+      ]
+    }
+  ],
   "learn_lists" : [],
   "actions" : [
     {
@@ -268,8 +374,8 @@
             }
           ],
           "source_info" : {
-            "filename" : "basic.p4",
-            "line" : 111,
+            "filename" : "/p4c/cup.p4",
+            "line" : 142,
             "column" : 8,
             "source_fragment" : "mark_to_drop(standard_metadata)"
           }
@@ -290,8 +396,8 @@
             }
           ],
           "source_info" : {
-            "filename" : "basic.p4",
-            "line" : 111,
+            "filename" : "/p4c/cup.p4",
+            "line" : 142,
             "column" : 8,
             "source_fragment" : "mark_to_drop(standard_metadata)"
           }
@@ -321,10 +427,33 @@
             }
           ],
           "source_info" : {
-            "filename" : "basic.p4",
-            "line" : 115,
+            "filename" : "/p4c/cup.p4",
+            "line" : 149,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = port"
+          }
+        },
+        {
+          "op" : "register_write",
+          "parameters" : [
+            {
+              "type" : "register_array",
+              "value" : "MyIngress.debug"
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x00000000"
+            },
+            {
+              "type" : "field",
+              "value" : ["standard_metadata", "ingress_global_timestamp"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/cup.p4",
+            "line" : 150,
+            "column" : 8,
+            "source_fragment" : "debug.write(0,standard_metadata.ingress_global_timestamp)"
           }
         }
       ]
@@ -352,8 +481,8 @@
             }
           ],
           "source_info" : {
-            "filename" : "basic.p4",
-            "line" : 132,
+            "filename" : "/p4c/cup.p4",
+            "line" : 168,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = port"
           }
@@ -366,8 +495,8 @@
       "name" : "ingress",
       "id" : 0,
       "source_info" : {
-        "filename" : "basic.p4",
-        "line" : 107,
+        "filename" : "/p4c/cup.p4",
+        "line" : 133,
         "column" : 8,
         "source_fragment" : "MyIngress"
       },
@@ -377,8 +506,8 @@
           "name" : "MyIngress.ipv4_lpm",
           "id" : 0,
           "source_info" : {
-            "filename" : "basic.p4",
-            "line" : 118,
+            "filename" : "/p4c/cup.p4",
+            "line" : 154,
             "column" : 10,
             "source_fragment" : "ipv4_lpm"
           },
@@ -415,8 +544,8 @@
           "name" : "MyIngress.mac_exact",
           "id" : 1,
           "source_info" : {
-            "filename" : "basic.p4",
-            "line" : 136,
+            "filename" : "/p4c/cup.p4",
+            "line" : 172,
             "column" : 10,
             "source_fragment" : "mac_exact"
           },
@@ -456,8 +585,8 @@
           "name" : "node_2",
           "id" : 0,
           "source_info" : {
-            "filename" : "basic.p4",
-            "line" : 149,
+            "filename" : "/p4c/cup.p4",
+            "line" : 185,
             "column" : 12,
             "source_fragment" : "hdr.ipv4.isValid()"
           },
@@ -479,8 +608,8 @@
           "name" : "node_4",
           "id" : 1,
           "source_info" : {
-            "filename" : "basic.p4",
-            "line" : 152,
+            "filename" : "/p4c/cup.p4",
+            "line" : 188,
             "column" : 12,
             "source_fragment" : "hdr.arp.isValid()"
           },
@@ -504,8 +633,8 @@
       "name" : "egress",
       "id" : 1,
       "source_info" : {
-        "filename" : "basic.p4",
-        "line" : 162,
+        "filename" : "/p4c/cup.p4",
+        "line" : 200,
         "column" : 8,
         "source_fragment" : "MyEgress"
       },
@@ -515,7 +644,34 @@
       "conditionals" : []
     }
   ],
-  "checksums" : [],
+  "checksums" : [
+    {
+      "name" : "cksum",
+      "id" : 0,
+      "source_info" : {
+        "filename" : "/p4c/cup.p4",
+        "line" : 212,
+        "column" : 8,
+        "source_fragment" : "update_checksum( ..."
+      },
+      "target" : ["ipv4", "hdrChecksum"],
+      "type" : "generic",
+      "calculation" : "calc",
+      "verify" : false,
+      "update" : true,
+      "if_cond" : {
+        "type" : "expression",
+        "value" : {
+          "op" : "d2b",
+          "left" : null,
+          "right" : {
+            "type" : "field",
+            "value" : ["ipv4", "$valid$"]
+          }
+        }
+      }
+    }
+  ],
   "force_arith" : [],
   "extern_instances" : [],
   "field_aliases" : [
@@ -556,7 +712,7 @@
       ["standard_metadata", "priority"]
     ]
   ],
-  "program" : "basic.bmv2/basic.p4i",
+  "program" : "/p4c/cup.bmv2/cup.p4i",
   "__meta__" : {
     "version" : [2, 23],
     "compiler" : "https://github.com/p4lang/p4c"

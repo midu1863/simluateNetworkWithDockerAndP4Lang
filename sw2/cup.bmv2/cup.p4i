@@ -1,6 +1,6 @@
-# 1 "/p4c/creditBased.p4"
+# 1 "/p4c/cup.p4"
 # 1 "<built-in>" 1
-# 1 "/p4c/creditBased.p4" 2
+# 1 "/p4c/cup.p4" 2
 /* -*- P4_16 -*- */
 
 # 1 "/usr/local/share/p4c/p4include/core.p4" 1
@@ -97,7 +97,7 @@ extern bool static_assert(bool check, string message);
 
 /// Like the above but using a default message.
 extern bool static_assert(bool check);
-# 3 "/p4c/creditBased.p4" 2
+# 3 "/p4c/cup.p4" 2
 # 1 "/usr/local/share/p4c/p4include/v1model.p4" 1
 /*
 Copyright 2013-present Barefoot Networks, Inc.
@@ -856,7 +856,7 @@ package V1Switch<H, M>(Parser<H, M> p,
                        ComputeChecksum<H, M> ck,
                        Deparser<H> dep
                        );
-# 4 "/p4c/creditBased.p4" 2
+# 4 "/p4c/cup.p4" 2
 
 const bit<16> TYPE_IPV4 = 0x0800;
 const bit<16> TYPE_ARP = 0x0806;
@@ -878,9 +878,9 @@ header ethernet_t {
 }
 
 header cup_t {
-    bit<8> srcSwitchId;
-    bit<8> dstSwitchId;
-    bit<4> opCode; //0 ask, 1 response, 2 update new credit, 3 break connection
+    bit<32> srcSwitchId;
+    bit<32> dstSwitchId;
+    bit<32> opCode; //0 ask, 1 response, 2 update new credit, 3 break connection
     bit<32> creditValue;
 }
 
@@ -937,6 +937,7 @@ struct headers {
     ethernet_t ethernet;
     arp_t arp;
     ipv4_t ipv4;
+    cup_t cup;
 }
 
 /*************************************************************************
@@ -968,6 +969,10 @@ parser MyParser(packet_in packet,
 
     state parse_ipv4 {
         packet.extract(hdr.ipv4);
+        if(hdr.ipv4.ihl == 9) {
+            packet.extract(hdr.cup);
+        }
+
         transition accept;
     }
 
@@ -988,8 +993,6 @@ control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
 control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
-
-    register<bit<32>>(max_port_number) credit_cards;
     register<bit<48>>(10) debug;
 
 
@@ -1056,12 +1059,11 @@ control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {
     apply {
-        if(hdr.ipv4.isValid()) {
-            hdr.cup.setValid();
-            hdr.cup.srcSwitchId = 255;
-            hdr.cup.dstSwitchId = 255;
-            hdr.cup.opCode = 16; //0 ask, 1 response, 2 update new credit, 3 break connection
-            hdr.cup.creditValue = 4294967295;
+        if(hdr.cup.isValid()) {
+            hdr.ipv4.ihl=5;
+            hdr.ipv4.totalLen = hdr.ipv4.totalLen - 12;
+            hdr.cup.setInvalid();
+            hdr.ipv4.totalLen = hdr.ipv4.totalLen - 4;
         }
     }
 }
@@ -1102,7 +1104,7 @@ control MyDeparser(packet_out packet, in headers hdr) {
             packet.emit(hdr.ethernet);
             packet.emit(hdr.arp);
             packet.emit(hdr.ipv4);
-
+            packet.emit(hdr.cup);
     }
 }
 
