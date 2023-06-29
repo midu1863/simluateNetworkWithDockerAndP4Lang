@@ -5,7 +5,6 @@
 const bit<16> TYPE_IPV4 = 0x0800;
 const bit<16> TYPE_ARP  = 0x0806;
 
-const bit<32> max_port_number = 2;
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
@@ -24,8 +23,8 @@ header ethernet_t {
 header cup_t {
     bit<32>  srcSwitchId;
     bit<32>  dstSwitchId;
-    bit<32>  opCode;         //0 ask, 1 response, 2 update new credit, 3 break connection
-    bit<32> creditValue;
+    bit<32>  opCode;     //0 ask, 1 response, 2 update new credit, 3 break connection
+    bit<32>  creditValue;
 }
 
 header arp_t {
@@ -83,6 +82,8 @@ struct headers {
     cup_t       cup;
     ipv4_t      ipv4;
 }
+
+register<bit<32>>(1) switchId;
 
 /*************************************************************************
 *********************** P A R S E R  ***********************************
@@ -142,13 +143,14 @@ control MyIngress(inout headers hdr,
         mark_to_drop(standard_metadata);
     }
 
-    action credited_based_forward() {
-
+    action add_mcast_grp() {
+        //standard_metadata.mcast_grp = 1;
     }
+
     action ipv4_forward(egressSpec_t port) {
         standard_metadata.egress_spec = port;
         debug.write(0,standard_metadata.ingress_global_timestamp);
-        credited_based_forward();
+        add_mcast_grp();
     }
 
     table ipv4_lpm {

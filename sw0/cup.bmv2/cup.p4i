@@ -998,13 +998,14 @@ control MyIngress(inout headers hdr,
         mark_to_drop(standard_metadata);
     }
 
-    action credited_based_forward() {
-
+    action add_mcast_grp() {
+        //standard_metadata.mcast_grp = 1;
     }
+
     action ipv4_forward(egressSpec_t port) {
         standard_metadata.egress_spec = port;
         debug.write(0,standard_metadata.ingress_global_timestamp);
-        credited_based_forward();
+        add_mcast_grp();
     }
 
     table ipv4_lpm {

@@ -263,7 +263,7 @@
       "id" : 0,
       "source_info" : {
         "filename" : "/p4c/cup.p4",
-        "line" : 242,
+        "line" : 243,
         "column" : 8,
         "source_fragment" : "MyDeparser"
       },
@@ -293,7 +293,7 @@
       "id" : 0,
       "source_info" : {
         "filename" : "/p4c/cup.p4",
-        "line" : 220,
+        "line" : 221,
         "column" : 8,
         "source_fragment" : "update_checksum( ..."
       },
@@ -428,7 +428,7 @@
           ],
           "source_info" : {
             "filename" : "/p4c/cup.p4",
-            "line" : 149,
+            "line" : 150,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = port"
           }
@@ -451,7 +451,7 @@
           ],
           "source_info" : {
             "filename" : "/p4c/cup.p4",
-            "line" : 150,
+            "line" : 151,
             "column" : 8,
             "source_fragment" : "debug.write(0,standard_metadata.ingress_global_timestamp)"
           }
@@ -482,7 +482,7 @@
           ],
           "source_info" : {
             "filename" : "/p4c/cup.p4",
-            "line" : 168,
+            "line" : 169,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = port"
           }
@@ -490,7 +490,7 @@
       ]
     },
     {
-      "name" : "cup203",
+      "name" : "cup204",
       "id" : 6,
       "runtime_data" : [],
       "primitives" : [
@@ -508,7 +508,7 @@
           ],
           "source_info" : {
             "filename" : "/p4c/cup.p4",
-            "line" : 203,
+            "line" : 204,
             "column" : 12,
             "source_fragment" : "hdr.ipv4.ihl = 9"
           }
@@ -550,7 +550,7 @@
           ],
           "source_info" : {
             "filename" : "/p4c/cup.p4",
-            "line" : 204,
+            "line" : 205,
             "column" : 12,
             "source_fragment" : "hdr.ipv4.totalLen = hdr.ipv4.totalLen + 16"
           }
@@ -565,7 +565,7 @@
           ],
           "source_info" : {
             "filename" : "/p4c/cup.p4",
-            "line" : 205,
+            "line" : 206,
             "column" : 12,
             "source_fragment" : "hdr.cup.setValid()"
           }
@@ -584,7 +584,7 @@
           ],
           "source_info" : {
             "filename" : "/p4c/cup.p4",
-            "line" : 206,
+            "line" : 207,
             "column" : 12,
             "source_fragment" : "hdr.cup.srcSwitchId = (bit<32>) 0xffffffff"
           }
@@ -603,7 +603,7 @@
           ],
           "source_info" : {
             "filename" : "/p4c/cup.p4",
-            "line" : 207,
+            "line" : 208,
             "column" : 12,
             "source_fragment" : "hdr.cup.dstSwitchId = (bit<32>) 0xffffffff"
           }
@@ -622,7 +622,7 @@
           ],
           "source_info" : {
             "filename" : "/p4c/cup.p4",
-            "line" : 208,
+            "line" : 209,
             "column" : 12,
             "source_fragment" : "hdr.cup.opCode = (bit<32>) 0xffffffff"
           }
@@ -641,7 +641,7 @@
           ],
           "source_info" : {
             "filename" : "/p4c/cup.p4",
-            "line" : 209,
+            "line" : 210,
             "column" : 12,
             "source_fragment" : "hdr.cup.creditValue = (bit<32>) 0xffffffff"
           }
@@ -666,7 +666,7 @@
           "id" : 0,
           "source_info" : {
             "filename" : "/p4c/cup.p4",
-            "line" : 154,
+            "line" : 155,
             "column" : 10,
             "source_fragment" : "ipv4_lpm"
           },
@@ -704,7 +704,7 @@
           "id" : 1,
           "source_info" : {
             "filename" : "/p4c/cup.p4",
-            "line" : 172,
+            "line" : 173,
             "column" : 10,
             "source_fragment" : "mac_exact"
           },
@@ -745,7 +745,7 @@
           "id" : 0,
           "source_info" : {
             "filename" : "/p4c/cup.p4",
-            "line" : 185,
+            "line" : 186,
             "column" : 12,
             "source_fragment" : "hdr.ipv4.isValid()"
           },
@@ -768,7 +768,7 @@
           "id" : 1,
           "source_info" : {
             "filename" : "/p4c/cup.p4",
-            "line" : 188,
+            "line" : 189,
             "column" : 12,
             "source_fragment" : "hdr.arp.isValid()"
           },
@@ -793,18 +793,18 @@
       "id" : 1,
       "source_info" : {
         "filename" : "/p4c/cup.p4",
-        "line" : 198,
+        "line" : 199,
         "column" : 8,
         "source_fragment" : "MyEgress"
       },
       "init_table" : "node_8",
       "tables" : [
         {
-          "name" : "tbl_cup203",
+          "name" : "tbl_cup204",
           "id" : 2,
           "source_info" : {
             "filename" : "/p4c/cup.p4",
-            "line" : 203,
+            "line" : 204,
             "column" : 25,
             "source_fragment" : "= 9; ..."
           },
@@ -816,10 +816,10 @@
           "support_timeout" : false,
           "direct_meters" : null,
           "action_ids" : [6],
-          "actions" : ["cup203"],
+          "actions" : ["cup204"],
           "base_default_next" : null,
           "next_tables" : {
-            "cup203" : null
+            "cup204" : null
           },
           "default_entry" : {
             "action_id" : 6,
@@ -836,7 +836,7 @@
           "id" : 2,
           "source_info" : {
             "filename" : "/p4c/cup.p4",
-            "line" : 202,
+            "line" : 203,
             "column" : 11,
             "source_fragment" : "hdr.ipv4.isValid() && hdr.ipv4.srcAddr == 0x0a0a0003"
           },
@@ -872,7 +872,7 @@
             }
           },
           "false_next" : null,
-          "true_next" : "tbl_cup203"
+          "true_next" : "tbl_cup204"
         }
       ]
     }
@@ -883,7 +883,7 @@
       "id" : 0,
       "source_info" : {
         "filename" : "/p4c/cup.p4",
-        "line" : 220,
+        "line" : 221,
         "column" : 8,
         "source_fragment" : "update_checksum( ..."
       },

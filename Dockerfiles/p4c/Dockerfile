@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM p4lang/p4c
 RUN apt update
 RUN apt-get update
 
