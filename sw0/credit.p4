@@ -4,7 +4,14 @@
 
 const bit<16> TYPE_IPV4 = 0x0800;
 const bit<16> TYPE_ARP  = 0x0806;
+const bit<16> TYPE_CUP  = 0x0100;
+const bit<32> maxPorts  = 3;
 
+// Buffer sizes related to the scheme N123
+const int rate = 10;
+const int n3 = 2*rate;
+const int n2 = 2*n3;
+const int n1 = n2;
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
@@ -12,6 +19,8 @@ const bit<16> TYPE_ARP  = 0x0806;
 typedef bit<9>  egressSpec_t;
 typedef bit<48> macAddr_t;
 typedef bit<32> ip4Addr_t;
+typedef bit<32> switchId_t;
+typedef bit<32> credtiValue_t;
 
 header ethernet_t {
 
@@ -21,10 +30,10 @@ header ethernet_t {
 }
 
 header cup_t {
-    bit<32>  srcSwitchId;
-    bit<32>  dstSwitchId;
-    bit<32>  opCode;     //0 ask, 1 response, 2 update new credit, 3 break connection
-    bit<32>  creditValue;
+    switchId_t  srcSwitchId;
+    switchId_t  dstSwitchId;
+    bit<32>     opCode;     //0 ask, 1 response, 2 update new credit, 3 break connection
+    bit<32>     creditValue;
 }
 
 header arp_t {
@@ -79,15 +88,20 @@ struct metadata {
 struct headers {
     ethernet_t  ethernet;
     arp_t       arp;
-    cup_t       cup;
     ipv4_t      ipv4;
+    cup_t       cup;
 }
 
-register<bit<32>>(1) switchId;
+register<switchId_t>(1) switchId;
+register<switchId_t>(maxPorts) portSwitchMapping;
+register<bit<32>>(maxPorts) creditCard; /*if it's dont sent if it's 0xffffffff send through until n3 buffer is full then go back to credit based*/
+register<bit<19>>(1) maxQueueLength;
+
 
 /*************************************************************************
 *********************** P A R S E R  ***********************************
 *************************************************************************/
+
 
 parser MyParser(packet_in packet,
                 out headers hdr,
@@ -103,6 +117,7 @@ parser MyParser(packet_in packet,
         transition select(hdr.ethernet.etherType) {
             TYPE_ARP: parse_arp;
             TYPE_IPV4: parse_ipv4;
+            TYPE_CUP: parse_cup;
             default: accept;
         }
     }
@@ -114,6 +129,12 @@ parser MyParser(packet_in packet,
 
     state parse_ipv4 {
         packet.extract(hdr.ipv4);
+        transition accept;
+    }
+
+    state parse_cup {
+        packet.extract(hdr.ipv4);
+        packet.extract(hdr.cup);
         transition accept;
     }
 
@@ -136,23 +157,17 @@ control MyIngress(inout headers hdr,
                   inout standard_metadata_t standard_metadata) {
     register<bit<48>>(10) debug;
 
-register<bit<19>>(2) queue;
-
-
     action drop() {
         mark_to_drop(standard_metadata);
     }
 
     action add_mcast_grp() {
-        //standard_metadata.mcast_grp = 1;
+        standard_metadata.mcast_grp = 1;
     }
 
     action ipv4_forward(egressSpec_t port) {
         standard_metadata.egress_spec = port;
         debug.write(0,standard_metadata.ingress_global_timestamp);
-        debug.write(1, (bit<48>)standard_metadata.enq_qdepth);
-        debug.write(2, (bit<48>)standard_metadata.deq_qdepth);
-        add_mcast_grp();
     }
 
     table ipv4_lpm {
@@ -170,7 +185,6 @@ register<bit<19>>(2) queue;
 
     action mac_forward(egressSpec_t port) {
         standard_metadata.egress_spec = port;
-
     }
 
     table mac_exact {
@@ -185,15 +199,47 @@ register<bit<19>>(2) queue;
         default_action = drop();
     }
 
+    action reduce_credit() {
+        credtiValue_t balence;
+        creditCard.read(balence, 1);
+
+        balence = balence - 1;
+        creditCard.write(1, balence);
+    }
+
+    action add_credit() {
+        credtiValue_t balence;
+        creditCard.read(balence, 1);
+
+        balence = balence + hdr.cup.creditValue;
+        creditCard.write(1, balence);
+    }
+
     apply {
-         queue.write(0, standard_metadata.enq_qdepth);
-        queue.write(1, standard_metadata.deq_qdepth);
-        if (hdr.ipv4.isValid()) {
-            ipv4_lpm.apply();
+        credtiValue_t balence = 0;
+        creditCard.read(balence, 1);
+        switchId_t id;
+        switchId.read(id, 0);
+
+        if (hdr.ipv4.isValid() && hdr.cup.isValid()) {
+            if (hdr.cup.dstSwitchId == id) {
+                add_credit();
+                drop();
+            }
+        } else {
+            if (hdr.ipv4.isValid()) {
+                ipv4_lpm.apply();
+                reduce_credit();
+            }
+            if (hdr.arp.isValid()) {
+                mac_exact.apply();
+                reduce_credit();
+            }
         }
-        if (hdr.arp.isValid()) {
-            mac_exact.apply();
-        }
+        if (balence>0) {
+
+            }
+
     }
 }
 
@@ -204,20 +250,8 @@ register<bit<19>>(2) queue;
 control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {
-    register<bit<19>>(2) queue;
-    apply {
 
-        queue.write(0, standard_metadata.enq_qdepth);
-        queue.write(1, standard_metadata.deq_qdepth);
-        if(hdr.ipv4.isValid() && hdr.ipv4.srcAddr == 0x0a0a0003) {
-            hdr.ipv4.ihl = 9;
-             hdr.ipv4.totalLen = hdr.ipv4.totalLen + 16;
-            hdr.cup.setValid();
-            hdr.cup.srcSwitchId = (bit<32>) 0x0000000f;
-            hdr.cup.dstSwitchId = (bit<32>) 0x00000001;
-            hdr.cup.opCode = (bit<32>) 0xffffffff;         //0 ask, 1 response, 2 update new credit, 3 break connection
-            hdr.cup.creditValue = (bit<32>) 0xffffffff;
-        }
+    apply {
     }
 }
 
@@ -227,9 +261,8 @@ control MyEgress(inout headers hdr,
 
 control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
      apply {
-
-        update_checksum(
-        hdr.ipv4.isValid() && hdr.cup.isValid(),
+       /* update_checksum(
+        hdr.ipv4.isValid(),
             { hdr.ipv4.version,
               hdr.ipv4.ihl,
               hdr.ipv4.diffserv,
@@ -240,14 +273,9 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
               hdr.ipv4.ttl,
               hdr.ipv4.protocol,
               hdr.ipv4.srcAddr,
-              hdr.ipv4.dstAddr,
-              hdr.cup.srcSwitchId,
-              hdr.cup.dstSwitchId,
-              hdr.cup.opCode,
-              hdr.cup.creditValue,
-            },
+              hdr.ipv4.dstAddr },
             hdr.ipv4.hdrChecksum,
-            HashAlgorithm.csum16);
+            HashAlgorithm.csum16);*/
     }
 }
 

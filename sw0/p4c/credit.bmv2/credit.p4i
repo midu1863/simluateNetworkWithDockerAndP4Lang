@@ -1,6 +1,6 @@
-# 1 "cup.p4"
+# 1 "/p4c/credit.p4"
 # 1 "<built-in>" 1
-# 1 "cup.p4" 2
+# 1 "/p4c/credit.p4" 2
 /* -*- P4_16 -*- */
 
 # 1 "/usr/local/share/p4c/p4include/core.p4" 1
@@ -97,7 +97,7 @@ extern bool static_assert(bool check, string message);
 
 /// Like the above but using a default message.
 extern bool static_assert(bool check);
-# 3 "cup.p4" 2
+# 3 "/p4c/credit.p4" 2
 # 1 "/usr/local/share/p4c/p4include/v1model.p4" 1
 /*
 Copyright 2013-present Barefoot Networks, Inc.
@@ -856,7 +856,7 @@ package V1Switch<H, M>(Parser<H, M> p,
                        ComputeChecksum<H, M> ck,
                        Deparser<H> dep
                        );
-# 4 "cup.p4" 2
+# 4 "/p4c/credit.p4" 2
 
 const bit<16> TYPE_IPV4 = 0x0800;
 const bit<16> TYPE_ARP = 0x0806;
@@ -935,8 +935,8 @@ struct metadata {
 struct headers {
     ethernet_t ethernet;
     arp_t arp;
-    cup_t cup;
     ipv4_t ipv4;
+    cup_t cup;
 }
 
 register<bit<32>>(1) switchId;
@@ -991,8 +991,9 @@ control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
     register<bit<48>>(10) debug;
+    register<bit<32>>(2) creditCard;
 
-register<bit<19>>(2) queue;
+
 
 
     action drop() {
@@ -1000,14 +1001,12 @@ register<bit<19>>(2) queue;
     }
 
     action add_mcast_grp() {
-        //standard_metadata.mcast_grp = 1;
+        standard_metadata.mcast_grp = 1;
     }
 
     action ipv4_forward(egressSpec_t port) {
         standard_metadata.egress_spec = port;
         debug.write(0,standard_metadata.ingress_global_timestamp);
-        debug.write(1, (bit<48>)standard_metadata.enq_qdepth);
-        debug.write(2, (bit<48>)standard_metadata.deq_qdepth);
         add_mcast_grp();
     }
 
@@ -1042,8 +1041,6 @@ register<bit<19>>(2) queue;
     }
 
     apply {
-         queue.write(0, standard_metadata.enq_qdepth);
-        queue.write(1, standard_metadata.deq_qdepth);
         if (hdr.ipv4.isValid()) {
             ipv4_lpm.apply();
         }
@@ -1060,17 +1057,13 @@ register<bit<19>>(2) queue;
 control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {
-    register<bit<19>>(2) queue;
     apply {
-
-        queue.write(0, standard_metadata.enq_qdepth);
-        queue.write(1, standard_metadata.deq_qdepth);
         if(hdr.ipv4.isValid() && hdr.ipv4.srcAddr == 0x0a0a0003) {
             hdr.ipv4.ihl = 9;
-             hdr.ipv4.totalLen = hdr.ipv4.totalLen + 16;
+            hdr.ipv4.totalLen = hdr.ipv4.totalLen + 16;
             hdr.cup.setValid();
-            hdr.cup.srcSwitchId = (bit<32>) 0x0000000f;
-            hdr.cup.dstSwitchId = (bit<32>) 0x00000001;
+            hdr.cup.srcSwitchId = (bit<32>) 0xffffffff;
+            hdr.cup.dstSwitchId = (bit<32>) 0xffffffff;
             hdr.cup.opCode = (bit<32>) 0xffffffff; //0 ask, 1 response, 2 update new credit, 3 break connection
             hdr.cup.creditValue = (bit<32>) 0xffffffff;
         }
@@ -1083,9 +1076,8 @@ control MyEgress(inout headers hdr,
 
 control MyComputeChecksum(inout headers hdr, inout metadata meta) {
      apply {
-
         update_checksum(
-        hdr.ipv4.isValid() && hdr.cup.isValid(),
+        hdr.ipv4.isValid(),
             { hdr.ipv4.version,
               hdr.ipv4.ihl,
               hdr.ipv4.diffserv,
@@ -1096,12 +1088,7 @@ control MyComputeChecksum(inout headers hdr, inout metadata meta) {
               hdr.ipv4.ttl,
               hdr.ipv4.protocol,
               hdr.ipv4.srcAddr,
-              hdr.ipv4.dstAddr,
-              hdr.cup.srcSwitchId,
-              hdr.cup.dstSwitchId,
-              hdr.cup.opCode,
-              hdr.cup.creditValue,
-            },
+              hdr.ipv4.dstAddr },
             hdr.ipv4.hdrChecksum,
             HashAlgorithm.csum16);
     }

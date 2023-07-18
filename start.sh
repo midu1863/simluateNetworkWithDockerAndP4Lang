@@ -31,17 +31,17 @@ sudo docker run --rm -itd --cap-add NET_ADMIN --name sw2 -v"$(pwd)"/sw2:/p4c p4l
 ## connect sw0
 sudo docker network connect sw0eth0 sw0
 sudo docker network connect sw0eth1 sw0
-sudo docker network connect credittunnel
+sudo docker network connect credittunnel sw0
 
 ## connect sw0 to sw1 1:0
 sudo docker network connect sw0eth1 sw1
 sudo docker network connect sw1eth1 sw1
-sudo docker network connect credittunnel
+sudo docker network connect credittunnel sw1
 
 ## connect sw1 to sw2 1:0
 sudo docker network connect sw1eth1 sw2
 sudo docker network connect sw2eth1 sw2
-sudo docker network connect credittunnel
+sudo docker network connect credittunnel sw2
 
 ## connect host0 to sw0:0 and host1 to sw2:1
 sudo docker network connect sw0eth0 host0
@@ -63,7 +63,7 @@ sudo docker exec host0 ip route delete default
 sudo docker exec host0 ip route add default via 10.10.0.2
 sudo docker exec host0 ip route add 13.13.0.0/16 dev eth1 proto kernel scope link src 10.10.0.3
 ## save the arp request
-sudo docker exec arp -i eth1 -s 13.13.0.3 02:42:0d:0d:00:03
+sudo docker exec host0 arp -i eth1 -s 13.13.0.3 02:42:0d:0d:00:03
 sudo docker exec host0 ifconfig eth1 mtu 1484 up
 
 sudo docker exec host1 ip route delete default
@@ -75,8 +75,6 @@ sudo docker exec host1 ifconfig eth1 mtu 1484 up
 
 sudo docker exec host0 ethtool -K eth1 rx off tx off
 sudo docker exec host1 ethtool -K eth1 rx off tx off
-
-
 
 ## compile it
 # now i mount a folder, in oder to manipulate on the program on local maschine

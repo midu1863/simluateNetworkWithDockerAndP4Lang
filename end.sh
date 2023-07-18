@@ -13,3 +13,4 @@ sudo docker network rm sw0eth1
 sudo docker network rm sw1eth1
 sudo docker network rm sw2eth1
 sudo docker network rm rxtunnel
+sudo docker network rm credittunnel
