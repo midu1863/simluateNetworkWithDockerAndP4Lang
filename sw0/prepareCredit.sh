@@ -24,5 +24,5 @@ mc_node_associate 1 0
 EOF
 
 simple_switch_CLI << EOF
-register_write creditCard 1 5
+register_write ingressCreditCard 1 1
 EOF

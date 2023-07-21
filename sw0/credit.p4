@@ -92,10 +92,10 @@ struct headers {
     cup_t       cup;
 }
 
-register<switchId_t>(1) switchId;
-register<switchId_t>(maxPorts) portSwitchMapping;
-register<bit<32>>(maxPorts) creditCard; /*if it's dont sent if it's 0xffffffff send through until n3 buffer is full then go back to credit based*/
-register<bit<19>>(1) maxQueueLength;
+register<switchId_t>(1)         switchId;
+register<switchId_t>(maxPorts)  portSwitchMapping;
+register<bit<32>>(maxPorts)     ingressCreditCard; /*if it's dont sent if it's 0xffffffff send through until n3 buffer is full then go back to credit based*/
+register<bit<19>>(1)            maxQueueLength;
 
 
 /*************************************************************************
@@ -112,13 +112,18 @@ parser MyParser(packet_in packet,
         transition parse_ethernet;
     }
 
+    state drop {
+
+        transition accept;
+    }
+
     state parse_ethernet {
         packet.extract(hdr.ethernet);
         transition select(hdr.ethernet.etherType) {
             TYPE_ARP: parse_arp;
             TYPE_IPV4: parse_ipv4;
             TYPE_CUP: parse_cup;
-            default: accept;
+            default: drop;
         }
     }
 
@@ -201,23 +206,26 @@ control MyIngress(inout headers hdr,
 
     action reduce_credit() {
         credtiValue_t balence;
-        creditCard.read(balence, 1);
+        ingressCreditCard.read(balence, 1);
 
         balence = balence - 1;
-        creditCard.write(1, balence);
+        ingressCreditCard.write(1, balence);
     }
 
     action add_credit() {
         credtiValue_t balence;
-        creditCard.read(balence, 1);
+        ingressCreditCard.read(balence, 1);
 
         balence = balence + hdr.cup.creditValue;
-        creditCard.write(1, balence);
+        ingressCreditCard.write(1, balence);
     }
 
     apply {
+        if (!hdr.ipv4.isValid() && !hdr.cup.isValid()) {
+            drop();
+        }
         credtiValue_t balence = 0;
-        creditCard.read(balence, 1);
+        ingressCreditCard.read(balence, 1);
         switchId_t id;
         switchId.read(id, 0);
 
@@ -227,18 +235,17 @@ control MyIngress(inout headers hdr,
                 drop();
             }
         } else {
-            if (hdr.ipv4.isValid()) {
-                ipv4_lpm.apply();
-                reduce_credit();
-            }
-            if (hdr.arp.isValid()) {
-                mac_exact.apply();
-                reduce_credit();
+            if (balence>0) {
+                if (hdr.ipv4.isValid()) {
+                    ipv4_lpm.apply();
+                    reduce_credit();
+                }
+                if (hdr.arp.isValid()) {
+                    mac_exact.apply();
+                    reduce_credit();
+                }
             }
         }
-        if (balence>0) {
-
-            }
 
     }
 }

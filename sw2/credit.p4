@@ -13,7 +13,7 @@ const int n3 = 2*rate;
 const int n2 = 2*n3;
 const int n1 = 2;
 
-const bit<48> TIME_OUT = 6000000;
+const bit<48> TIME_OUT = 2000000;
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
@@ -120,15 +120,21 @@ parser MyParser(packet_in packet,
         transition parse_ethernet;
     }
 
+    state drop {
+
+        transition accept;
+    }
+
     state parse_ethernet {
         packet.extract(hdr.ethernet);
         transition select(hdr.ethernet.etherType) {
             TYPE_ARP:   parse_arp;
             TYPE_IPV4:  parse_ipv4;
             TYPE_CUP:   parse_cup;
-            default:    accept;
+            default:    drop;
         }
     }
+
 
     state parse_arp {
         packet.extract(hdr.arp);
@@ -244,7 +250,9 @@ control MyIngress(inout headers hdr,
     register<bit<19>>(2) queue;
 
     apply {
-
+        if (!hdr.ipv4.isValid() && !hdr.cup.isValid()) {
+            drop();
+        }
         if (hdr.cup.isValid()) {
             // do action for adding credits
             drop();
