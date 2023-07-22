@@ -1102,7 +1102,13 @@ control MyIngress(inout headers hdr,
 
         hdr.ethernet.etherType = TYPE_CUP;
     }
+
+    action set_credit(creditValue_t value) {
+        ingressCreditCard.write(1, value);
+    }
     register<bit<19>>(2) queue;
+
+
 
     apply {
         if (!hdr.ipv4.isValid() && !hdr.cup.isValid()) {
@@ -1113,12 +1119,20 @@ control MyIngress(inout headers hdr,
             switchId.read(ownId, 0);
 
             if (hdr.cup.dstSwitchId == ownId) {
-                creditValue_t balence = 0;
 
-                ingressCreditCard.read(balence, 1);
-                balence = balence + hdr.cup.creditValue;
-
-                ingressCreditCard.write(1, balence);
+                if (hdr.cup.opCode == 0x1) {
+                    ingressCreditCard.write(1, 0xffffffff);
+                }
+                if (hdr.cup.opCode == 0x2) {
+                    creditValue_t balence = 0;
+                    ingressCreditCard.read(balence, 1);
+                    if(balence == 0xffffffff) {
+                        set_credit(hdr.cup.creditValue);
+                    } else {
+                        balence = balence + hdr.cup.creditValue;
+                        ingressCreditCard.write(1, balence);
+                    }
+                }
             } else {
                 drop();
             }
@@ -1133,6 +1147,9 @@ control MyIngress(inout headers hdr,
                 egressTimeInterval.read(currentTime, 1);
                 bit<48> oldUpdatedTime=0;
                 lastUpdatedTime.read(oldUpdatedTime, 1);
+                creditValue_t balence = 0;
+                ingressCreditCard.read(balence, 1);
+
                 if (currentTime > oldUpdatedTime + TIME_OUT || currentTime == 0) { //if we initial the switch the the time is 0, because no packet aren't send to egress
                     lastUpdatedTime.write(1, currentTime);
                     bit<32> giveCreditBalance = 0;
@@ -1144,8 +1161,16 @@ control MyIngress(inout headers hdr,
 
                     if (dequeue < n1 && leftOver == 0) {
                         sendCredits((bit<32>) (10));
+                        hdr.cup.opCode = 0x1;
                         leftOverCreditCard.write(1, 10);
-                        sendToGroupId();
+
+                        // asking for ingressCreditCard
+                        if(balence > 0) {
+                            sendToGroupId();
+                        } else {
+                            standard_metadata.egress_spec = 2;
+                        }
+
                     } else {
                         creditValue_t newBalence = (leftOver + (10 - ((bit<32>) dequeue)));
                         if (newBalence <= 10) {
@@ -1153,13 +1178,22 @@ control MyIngress(inout headers hdr,
                             creditValue_t oldLeftOver = 0;
                             leftOverCreditCard.read(oldLeftOver, 1);
                             leftOverCreditCard.write(1, oldLeftOver + newBalence);
+                            hdr.cup.opCode = 0x2;
                             sendToGroupId();
                         } else {
-                            sendToGroupId();
+                            // asking for ingressCreditCard
+                            if(balence > 0) {
+                                sendToGroupId();
+                            } else {
+                                standard_metadata.egress_spec = 2;
+                            }
                         }
                     }
                 } else {
-                    sendToGroupId();
+                    // asking for ingressCreditCard
+                    if (balence > 0) {
+                        sendToGroupId();
+                    }
                 }
             }
 
@@ -1255,13 +1289,20 @@ control MyEgress(inout headers hdr,
 
     apply {
         if (standard_metadata.egress_port == 1) {
+
+            creditValue_t balence = 0;
+            ingressCreditCard.read(balence, 1);
+
             if(hdr.cup.isValid()) {
                 removeCUPheader();
             }
             reduceLeftOver();
-            reduceCreditBalance();
             updateQueueDepth();
             updateEgressTimeInterval();
+
+            if (balence != 0xffffffff) {
+                reduceCreditBalance();
+            }
         }
 
         if (standard_metadata.egress_port == 2 && !hdr.cup.isValid()) {

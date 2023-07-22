@@ -278,11 +278,13 @@ control MyIngress(inout headers hdr,
                     if (dequeue < n1 && leftOver == 0) {
                         sendCredits((bit<32>) (10));
                         sendToGroupId();
+                        hdr.cup.opCode = 0x1;
                         leftOverCreditCard.write(1, 10);
                     } else {
                         creditValue_t newBalence = (leftOver + (10 - ((bit<32>) dequeue)));
                         if (newBalence <= 10) {
                             sendCredits(newBalence);
+                            hdr.cup.opCode = 0x2;
                             sendToGroupId();
                             creditValue_t oldLeftOver = 0;
                             leftOverCreditCard.read(oldLeftOver, 1);

@@ -1,14 +1,14 @@
 ## sw0 port 0
-sudo docker network create --driver=bridge --subnet=10.10.0.0/16 --ipv6=false sw0eth0
+sudo docker network create --driver=bridge --subnet=10.10.0.0/16 sw0eth0
 ## sw0 port 1
-sudo docker network create --driver=bridge --subnet=11.11.0.0/16 --ipv6=false sw0eth1
+sudo docker network create --driver=bridge --subnet=11.11.0.0/16 sw0eth1
 ## sw1 port 1
-sudo docker network create --driver=bridge --subnet=12.12.0.0/16 --ipv6=false sw1eth1
+sudo docker network create --driver=bridge --subnet=12.12.0.0/16 sw1eth1
 ## sw2 port 1
-sudo docker network create --driver=bridge --subnet=13.13.0.0/16 --ipv6=false sw2eth1
+sudo docker network create --driver=bridge --subnet=13.13.0.0/16 sw2eth1
 ## tunnel rx so we get only downstream later
-sudo docker network create --driver=bridge --subnet=14.14.0.0/16 --ipv6=false rxtunnel
-sudo docker network create --driver=bridge --subnet=20.20.0.0/16 --ipv6=false credittunnel
+sudo docker network create --driver=bridge --subnet=14.14.0.0/16 rxtunnel
+sudo docker network create --driver=bridge --subnet=20.20.0.0/16 credittunnel
 
 
 ## create host's

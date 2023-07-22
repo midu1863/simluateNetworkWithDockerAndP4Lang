@@ -1076,6 +1076,10 @@ control MyIngress(inout headers hdr,
         ingressCreditCard.write(1, balence);
     }
 
+    action set_credit(credtiValue_t value) {
+        ingressCreditCard.write(1, value);
+    }
+
     apply {
         if (!hdr.ipv4.isValid() && !hdr.cup.isValid()) {
             drop();
@@ -1087,18 +1091,32 @@ control MyIngress(inout headers hdr,
 
         if (hdr.ipv4.isValid() && hdr.cup.isValid()) {
             if (hdr.cup.dstSwitchId == id) {
-                add_credit();
+                if (hdr.cup.opCode == 0x1) {
+                    set_credit(0xffffffff);
+                }
+                if (hdr.cup.opCode == 0x2) {
+                    if (balence == 0xffffffff) {
+                        set_credit(hdr.cup.creditValue);
+                    } else {
+                        add_credit();
+                    }
+
+                }
                 drop();
             }
         } else {
             if (balence>0) {
                 if (hdr.ipv4.isValid()) {
                     ipv4_lpm.apply();
-                    reduce_credit();
+                    if (balence != 0xffffffff) {
+                        reduce_credit();
+                    }
                 }
                 if (hdr.arp.isValid()) {
                     mac_exact.apply();
-                    reduce_credit();
+                    if (balence != 0xffffffff) {
+                        reduce_credit();
+                    }
                 }
             }
         }
