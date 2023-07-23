@@ -20,7 +20,7 @@ typedef bit<9>  egressSpec_t;
 typedef bit<48> macAddr_t;
 typedef bit<32> ip4Addr_t;
 typedef bit<32> switchId_t;
-typedef bit<32> credtiValue_t;
+typedef bit<32> creditValue_t;
 
 header ethernet_t {
 
@@ -162,6 +162,9 @@ control MyIngress(inout headers hdr,
                   inout standard_metadata_t standard_metadata) {
     register<bit<48>>(10) debug;
 
+    register<bit<48>>(maxPorts) lastUpdatedTime;
+    register<bit<1>>(maxPorts)  hasTimeBanList;
+    register<bit<48>>(maxPorts) timeBanList;
     action drop() {
         mark_to_drop(standard_metadata);
     }
@@ -205,7 +208,7 @@ control MyIngress(inout headers hdr,
     }
 
     action reduce_credit() {
-        credtiValue_t balence;
+        creditValue_t balence = 0;
         ingressCreditCard.read(balence, 1);
 
         balence = balence - 1;
@@ -213,22 +216,41 @@ control MyIngress(inout headers hdr,
     }
 
     action add_credit() {
-        credtiValue_t balence;
+        creditValue_t balence;
         ingressCreditCard.read(balence, 1);
 
         balence = balence + hdr.cup.creditValue;
         ingressCreditCard.write(1, balence);
     }
 
-    action set_credit(credtiValue_t value) {
+    action set_credit(creditValue_t value) {
         ingressCreditCard.write(1, value);
     }
 
+    action setTimeBan(creditValue_t time) {
+        bit<48>newTime = standard_metadata.ingress_global_timestamp + (1000000 * (bit<48>)time);
+        hasTimeBanList.write(1, 1);
+        timeBanList.write(1, newTime);
+    }
+
+
+    bit<1> hasTimeBan = 0;
     apply {
+
+        bit<48> timeBan = 0;
+        timeBanList.read(timeBan, 1);
+
+        if(standard_metadata.ingress_global_timestamp <= timeBan) {
+            hasTimeBan = 1;
+        } else {
+            hasTimeBan = 0;
+        }
+
+
         if (!hdr.ipv4.isValid() && !hdr.cup.isValid()) {
             drop();
         }
-        credtiValue_t balence = 0;
+        creditValue_t balence = 0;
         ingressCreditCard.read(balence, 1);
         switchId_t id;
         switchId.read(id, 0);
@@ -236,31 +258,22 @@ control MyIngress(inout headers hdr,
         if (hdr.ipv4.isValid() && hdr.cup.isValid()) {
             if (hdr.cup.dstSwitchId == id) {
                 if (hdr.cup.opCode == 0x1) {
-                    set_credit(0xffffffff);
+                    add_credit();
+                } else if (hdr.cup.opCode == 0x2) {
+                    setTimeBan(hdr.cup.creditValue);
+                }} else {
+                    drop();
                 }
-                if (hdr.cup.opCode == 0x2) {
-                    if (balence == 0xffffffff) {
-                        set_credit(hdr.cup.creditValue);
-                    } else {
-                        add_credit();
-                    }
-
-                }
-                drop();
-            }
-        } else {
-            if (balence>0) {
+            } else {
+            if (hasTimeBan != 1 && balence > 0) {
                 if (hdr.ipv4.isValid()) {
                     ipv4_lpm.apply();
-                    if (balence != 0xffffffff) {
-                        reduce_credit();
-                    }
+                    reduce_credit();
                 }
                 if (hdr.arp.isValid()) {
                     mac_exact.apply();
-                    if (balence != 0xffffffff) {
-                        reduce_credit();
-                    }
+                    reduce_credit();
+
                 }
             }
         }

@@ -869,7 +869,7 @@ const int n3 = 2*rate;
 const int n2 = 2*n3;
 const int n1 = 2;
 
-const bit<48> TIME_OUT = 2000000;
+const bit<48> TIME_OUT = 1000000;
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
@@ -957,7 +957,6 @@ register<bit<32>>(maxPorts) leftOverCreditCard;
 register<bit<19>>(maxPorts) egressDequeueDepth;
 register<bit<19>>(maxPorts) egressEnqueueDepth;
 register<bit<48>>(maxPorts) egressTimeInterval;
-
 
 register<bit<19>>(1) maxQueueLength; //
 
@@ -1110,7 +1109,7 @@ control MyIngress(inout headers hdr,
             drop();
         }
         if (hdr.cup.isValid()) {
-            // do action for adding credits
+            // the end point of the ISP don't get credits
             drop();
         } else {
             if(standard_metadata.egress_port == 0) {
@@ -1122,7 +1121,7 @@ control MyIngress(inout headers hdr,
                 egressTimeInterval.read(currentTime, 1);
                 bit<48> oldUpdatedTime=0;
                 lastUpdatedTime.read(oldUpdatedTime, 1);
-                if (currentTime > oldUpdatedTime + TIME_OUT || currentTime == 0) { //if we initial the switch the the time is 0, because no packet aren't send to egress
+                if (currentTime > oldUpdatedTime + TIME_OUT || currentTime == 0) { //if we initial the switch the the time is 0, because no packets are send to egress
                     lastUpdatedTime.write(1, currentTime);
                     bit<32> giveCreditBalance = 0;
                     bit<19> dequeue =0;
@@ -1136,11 +1135,18 @@ control MyIngress(inout headers hdr,
                         sendToGroupId();
                         hdr.cup.opCode = 0x1;
                         leftOverCreditCard.write(1, 10);
+                    } else if (dequeue == 9) {//send time out to not overwhelm the receiver
+                        bit<32> timeout = 2;
+                        bit<19> second = 0;
+                        egressEnqueueDepth.read(second, 1);
+                        timeout = timeout + ((bit<32>) second);
+                        sendCredits(timeout);
+                        hdr.cup.opCode = 0x2;
                     } else {
                         creditValue_t newBalence = (leftOver + (10 - ((bit<32>) dequeue)));
                         if (newBalence <= 10) {
                             sendCredits(newBalence);
-                            hdr.cup.opCode = 0x2;
+                            hdr.cup.opCode = 0x1;
                             sendToGroupId();
                             creditValue_t oldLeftOver = 0;
                             leftOverCreditCard.read(oldLeftOver, 1);
