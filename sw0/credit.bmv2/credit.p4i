@@ -1089,10 +1089,8 @@ control MyIngress(inout headers hdr,
         timeBanList.write(1, newTime);
     }
 
-
     bit<1> hasTimeBan = 0;
-    apply {
-
+    action update_has_time_ban() {
         bit<48> timeBan = 0;
         timeBanList.read(timeBan, 1);
 
@@ -1101,7 +1099,10 @@ control MyIngress(inout headers hdr,
         } else {
             hasTimeBan = 0;
         }
+    }
 
+
+    apply {
 
         if (!hdr.ipv4.isValid() && !hdr.cup.isValid()) {
             drop();

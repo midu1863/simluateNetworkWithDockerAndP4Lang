@@ -869,7 +869,7 @@ const int n3 = 2*rate;
 const int n2 = 2*n3;
 const int n1 = 2;
 
-const bit<48> TIME_OUT = 1000000;
+const bit<48> TIME_OUT = 100000;
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
@@ -961,6 +961,10 @@ register<bit<48>>(maxPorts) egressTimeInterval;
 
 register<bit<19>>(1) maxQueueLength; //
 
+// control variables to control time ban
+register<bit<1>>(maxPorts) hasTimeBanList;
+register<bit<48>>(maxPorts) timeBanList;
+
 
 /*************************************************************************
 *********************** P A R S E R  ***********************************
@@ -1026,8 +1030,8 @@ control MyIngress(inout headers hdr,
                   inout standard_metadata_t standard_metadata) {
     register<bit<32>>(10) debug;
     register<bit<48>>(maxPorts) lastUpdatedTime;
-    register<bit<1>>(maxPorts) hasTimeBanList;
-    register<bit<48>>(maxPorts) timeBanList;
+
+    bit<1> hasTimeBan = 0;
 
     action drop() {
         mark_to_drop(standard_metadata);
@@ -1117,7 +1121,7 @@ control MyIngress(inout headers hdr,
     register<bit<19>>(2) queue;
 
 
-    bit<1> hasTimeBan = 0;
+
     apply {
 
         bit<48> timeBan = 0;
@@ -1309,10 +1313,16 @@ control MyEgress(inout headers hdr,
             if(hdr.cup.isValid()) {
                 removeCUPheader();
             }
-            reduceLeftOver();
+
+            bit<1> hasTimeBan = 0;
+            hasTimeBanList.read(hasTimeBan, 1);
+            if(hasTimeBan != 1) {
+                reduceLeftOver();
+                reduceCreditBalance();
+            }
+
             updateQueueDepth();
             updateEgressTimeInterval();
-            reduceCreditBalance();
         }
 
         if (standard_metadata.egress_port == 2 && !hdr.cup.isValid()) {
