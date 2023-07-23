@@ -6,7 +6,6 @@
       "fields" : [
         ["tmp", 32, false],
         ["currentTime_0", 48, false],
-        ["oldUpdatedTime_0", 48, false],
         ["dequeue_0", 19, false],
         ["leftOver_0", 32, false],
         ["timeout_0", 32, false],
@@ -730,7 +729,7 @@
       ]
     },
     {
-      "name" : "MyIngress.sendToGroupId",
+      "name" : "MyIngress.sendCredits",
       "id" : 5,
       "runtime_data" : [],
       "primitives" : [
@@ -739,18 +738,151 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["standard_metadata", "mcast_grp"]
+              "value" : ["ipv4", "ihl"]
             },
             {
               "type" : "hexstr",
-              "value" : "0x0001"
+              "value" : "0x09"
             }
           ],
           "source_info" : {
             "filename" : "/p4c/credit.p4",
-            "line" : 235,
+            "line" : 239,
             "column" : 8,
-            "source_fragment" : "standard_metadata.mcast_grp = 1"
+            "source_fragment" : "hdr.ipv4.ihl = 9"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["ipv4", "totalLen"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "&",
+                  "left" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "+",
+                      "left" : {
+                        "type" : "field",
+                        "value" : ["ipv4", "totalLen"]
+                      },
+                      "right" : {
+                        "type" : "hexstr",
+                        "value" : "0x0010"
+                      }
+                    }
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0xffff"
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/credit.p4",
+            "line" : 240,
+            "column" : 8,
+            "source_fragment" : "hdr.ipv4.totalLen = hdr.ipv4.totalLen + 16"
+          }
+        },
+        {
+          "op" : "add_header",
+          "parameters" : [
+            {
+              "type" : "header",
+              "value" : "cup"
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/credit.p4",
+            "line" : 241,
+            "column" : 8,
+            "source_fragment" : "hdr.cup.setValid()"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["cup", "srcSwitchId"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x00000003"
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/credit.p4",
+            "line" : 242,
+            "column" : 8,
+            "source_fragment" : "hdr.cup.srcSwitchId = (bit<32>) 0x00000003"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["cup", "dstSwitchId"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x00000002"
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/credit.p4",
+            "line" : 243,
+            "column" : 8,
+            "source_fragment" : "hdr.cup.dstSwitchId = (bit<32>) 0x00000002"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["cup", "creditValue"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x0000000a"
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/credit.p4",
+            "line" : 245,
+            "column" : 8,
+            "source_fragment" : "hdr.cup.creditValue = creditBalance"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["ethernet", "etherType"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x0100"
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/credit.p4",
+            "line" : 7,
+            "column" : 25,
+            "source_fragment" : "0x0100; ..."
           }
         }
       ]
@@ -882,8 +1014,8 @@
               "value" : ["cup", "creditValue"]
             },
             {
-              "type" : "hexstr",
-              "value" : "0x0000000a"
+              "type" : "field",
+              "value" : ["scalars", "timeout_0"]
             }
           ],
           "source_info" : {
@@ -1042,165 +1174,6 @@
             },
             {
               "type" : "field",
-              "value" : ["scalars", "timeout_0"]
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/credit.p4",
-            "line" : 245,
-            "column" : 8,
-            "source_fragment" : "hdr.cup.creditValue = creditBalance"
-          }
-        },
-        {
-          "op" : "assign",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["ethernet", "etherType"]
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x0100"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/credit.p4",
-            "line" : 7,
-            "column" : 25,
-            "source_fragment" : "0x0100; ..."
-          }
-        }
-      ]
-    },
-    {
-      "name" : "MyIngress.sendCredits",
-      "id" : 8,
-      "runtime_data" : [],
-      "primitives" : [
-        {
-          "op" : "assign",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["ipv4", "ihl"]
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x09"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/credit.p4",
-            "line" : 239,
-            "column" : 8,
-            "source_fragment" : "hdr.ipv4.ihl = 9"
-          }
-        },
-        {
-          "op" : "assign",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["ipv4", "totalLen"]
-            },
-            {
-              "type" : "expression",
-              "value" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "&",
-                  "left" : {
-                    "type" : "expression",
-                    "value" : {
-                      "op" : "+",
-                      "left" : {
-                        "type" : "field",
-                        "value" : ["ipv4", "totalLen"]
-                      },
-                      "right" : {
-                        "type" : "hexstr",
-                        "value" : "0x0010"
-                      }
-                    }
-                  },
-                  "right" : {
-                    "type" : "hexstr",
-                    "value" : "0xffff"
-                  }
-                }
-              }
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/credit.p4",
-            "line" : 240,
-            "column" : 8,
-            "source_fragment" : "hdr.ipv4.totalLen = hdr.ipv4.totalLen + 16"
-          }
-        },
-        {
-          "op" : "add_header",
-          "parameters" : [
-            {
-              "type" : "header",
-              "value" : "cup"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/credit.p4",
-            "line" : 241,
-            "column" : 8,
-            "source_fragment" : "hdr.cup.setValid()"
-          }
-        },
-        {
-          "op" : "assign",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["cup", "srcSwitchId"]
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x00000003"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/credit.p4",
-            "line" : 242,
-            "column" : 8,
-            "source_fragment" : "hdr.cup.srcSwitchId = (bit<32>) 0x00000003"
-          }
-        },
-        {
-          "op" : "assign",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["cup", "dstSwitchId"]
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x00000002"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/credit.p4",
-            "line" : 243,
-            "column" : 8,
-            "source_fragment" : "hdr.cup.dstSwitchId = (bit<32>) 0x00000002"
-          }
-        },
-        {
-          "op" : "assign",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["cup", "creditValue"]
-            },
-            {
-              "type" : "field",
               "value" : ["scalars", "newBalence_0"]
             }
           ],
@@ -1234,7 +1207,7 @@
     },
     {
       "name" : "credit280",
-      "id" : 9,
+      "id" : 8,
       "runtime_data" : [],
       "primitives" : [
         {
@@ -1283,7 +1256,7 @@
     },
     {
       "name" : "credit283",
-      "id" : 10,
+      "id" : 9,
       "runtime_data" : [],
       "primitives" : [
         {
@@ -1384,7 +1357,7 @@
     },
     {
       "name" : "credit288",
-      "id" : 11,
+      "id" : 10,
       "runtime_data" : [],
       "primitives" : [
         {
@@ -1410,7 +1383,7 @@
     },
     {
       "name" : "credit293",
-      "id" : 12,
+      "id" : 11,
       "runtime_data" : [],
       "primitives" : [
         {
@@ -1436,7 +1409,7 @@
     },
     {
       "name" : "credit296",
-      "id" : 13,
+      "id" : 12,
       "runtime_data" : [],
       "primitives" : [
         {
@@ -1581,7 +1554,7 @@
     },
     {
       "name" : "credit290",
-      "id" : 14,
+      "id" : 13,
       "runtime_data" : [],
       "primitives" : [
         {
@@ -1659,10 +1632,33 @@
       ]
     },
     {
-      "name" : "credit269",
-      "id" : 15,
+      "name" : "credit265",
+      "id" : 14,
       "runtime_data" : [],
       "primitives" : [
+        {
+          "op" : "register_read",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "currentTime_0"]
+            },
+            {
+              "type" : "register_array",
+              "value" : "egressTimeInterval"
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x00000001"
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/credit.p4",
+            "line" : 265,
+            "column" : 16,
+            "source_fragment" : "egressTimeInterval.read(currentTime, 1)"
+          }
+        },
         {
           "op" : "register_write",
           "parameters" : [
@@ -1735,61 +1731,8 @@
       ]
     },
     {
-      "name" : "credit265",
-      "id" : 16,
-      "runtime_data" : [],
-      "primitives" : [
-        {
-          "op" : "register_read",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["scalars", "currentTime_0"]
-            },
-            {
-              "type" : "register_array",
-              "value" : "egressTimeInterval"
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x00000001"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/credit.p4",
-            "line" : 265,
-            "column" : 16,
-            "source_fragment" : "egressTimeInterval.read(currentTime, 1)"
-          }
-        },
-        {
-          "op" : "register_read",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["scalars", "oldUpdatedTime_0"]
-            },
-            {
-              "type" : "register_array",
-              "value" : "MyIngress.lastUpdatedTime"
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x00000001"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/credit.p4",
-            "line" : 267,
-            "column" : 16,
-            "source_fragment" : "lastUpdatedTime.read(oldUpdatedTime, 1)"
-          }
-        }
-      ]
-    },
-    {
       "name" : "MyEgress.drop",
-      "id" : 17,
+      "id" : 15,
       "runtime_data" : [],
       "primitives" : [
         {
@@ -1811,7 +1754,7 @@
     },
     {
       "name" : "MyEgress.removeCUPheader",
-      "id" : 18,
+      "id" : 16,
       "runtime_data" : [],
       "primitives" : [
         {
@@ -1913,7 +1856,7 @@
     },
     {
       "name" : "MyEgress.updateQueueDepth",
-      "id" : 19,
+      "id" : 17,
       "runtime_data" : [],
       "primitives" : [
         {
@@ -2030,7 +1973,7 @@
     },
     {
       "name" : "MyEgress.updateEgressTimeInterval",
-      "id" : 20,
+      "id" : 18,
       "runtime_data" : [],
       "primitives" : [
         {
@@ -2092,7 +2035,7 @@
     },
     {
       "name" : "MyEgress.reduceLeftOver",
-      "id" : 21,
+      "id" : 19,
       "runtime_data" : [],
       "primitives" : [
         {
@@ -2272,43 +2215,14 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [16],
+          "action_ids" : [14],
           "actions" : ["credit265"],
           "base_default_next" : "node_8",
           "next_tables" : {
             "credit265" : "node_8"
           },
           "default_entry" : {
-            "action_id" : 16,
-            "action_const" : true,
-            "action_data" : [],
-            "action_entry_const" : true
-          }
-        },
-        {
-          "name" : "tbl_credit269",
-          "id" : 3,
-          "source_info" : {
-            "filename" : "/p4c/credit.p4",
-            "line" : 269,
-            "column" : 20,
-            "source_fragment" : "lastUpdatedTime.write(1, currentTime); ..."
-          },
-          "key" : [],
-          "match_type" : "exact",
-          "type" : "simple",
-          "max_size" : 1024,
-          "with_counters" : false,
-          "support_timeout" : false,
-          "direct_meters" : null,
-          "action_ids" : [15],
-          "actions" : ["credit269"],
-          "base_default_next" : "node_10",
-          "next_tables" : {
-            "credit269" : "node_10"
-          },
-          "default_entry" : {
-            "action_id" : 15,
+            "action_id" : 14,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
@@ -2316,7 +2230,7 @@
         },
         {
           "name" : "tbl_sendCredits",
-          "id" : 4,
+          "id" : 3,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 278,
@@ -2330,14 +2244,14 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [6],
+          "action_ids" : [5],
           "actions" : ["MyIngress.sendCredits"],
           "base_default_next" : "tbl_sendToGroupId",
           "next_tables" : {
             "MyIngress.sendCredits" : "tbl_sendToGroupId"
           },
           "default_entry" : {
-            "action_id" : 6,
+            "action_id" : 5,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
@@ -2345,7 +2259,7 @@
         },
         {
           "name" : "tbl_sendToGroupId",
-          "id" : 5,
+          "id" : 4,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 279,
@@ -2374,7 +2288,7 @@
         },
         {
           "name" : "tbl_credit280",
-          "id" : 6,
+          "id" : 5,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 280,
@@ -2388,14 +2302,14 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [9],
+          "action_ids" : [8],
           "actions" : ["credit280"],
           "base_default_next" : null,
           "next_tables" : {
             "credit280" : null
           },
           "default_entry" : {
-            "action_id" : 9,
+            "action_id" : 8,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
@@ -2403,7 +2317,7 @@
         },
         {
           "name" : "tbl_credit283",
-          "id" : 7,
+          "id" : 6,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 283,
@@ -2417,14 +2331,14 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [10],
+          "action_ids" : [9],
           "actions" : ["credit283"],
           "base_default_next" : "tbl_sendCredits_0",
           "next_tables" : {
             "credit283" : "tbl_sendCredits_0"
           },
           "default_entry" : {
-            "action_id" : 10,
+            "action_id" : 9,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
@@ -2432,7 +2346,7 @@
         },
         {
           "name" : "tbl_sendCredits_0",
-          "id" : 8,
+          "id" : 7,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 287,
@@ -2446,14 +2360,14 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [7],
+          "action_ids" : [6],
           "actions" : ["MyIngress.sendCredits"],
           "base_default_next" : "tbl_credit288",
           "next_tables" : {
             "MyIngress.sendCredits" : "tbl_credit288"
           },
           "default_entry" : {
-            "action_id" : 7,
+            "action_id" : 6,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
@@ -2461,7 +2375,7 @@
         },
         {
           "name" : "tbl_credit288",
-          "id" : 9,
+          "id" : 8,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 288,
@@ -2475,14 +2389,14 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [11],
+          "action_ids" : [10],
           "actions" : ["credit288"],
           "base_default_next" : null,
           "next_tables" : {
             "credit288" : null
           },
           "default_entry" : {
-            "action_id" : 11,
+            "action_id" : 10,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
@@ -2490,7 +2404,7 @@
         },
         {
           "name" : "tbl_credit290",
-          "id" : 10,
+          "id" : 9,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 290,
@@ -2504,14 +2418,14 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [14],
+          "action_ids" : [13],
           "actions" : ["credit290"],
-          "base_default_next" : "node_19",
+          "base_default_next" : "node_17",
           "next_tables" : {
-            "credit290" : "node_19"
+            "credit290" : "node_17"
           },
           "default_entry" : {
-            "action_id" : 14,
+            "action_id" : 13,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
@@ -2519,7 +2433,7 @@
         },
         {
           "name" : "tbl_sendCredits_1",
-          "id" : 11,
+          "id" : 10,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 292,
@@ -2533,14 +2447,14 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [8],
+          "action_ids" : [7],
           "actions" : ["MyIngress.sendCredits"],
           "base_default_next" : "tbl_credit293",
           "next_tables" : {
             "MyIngress.sendCredits" : "tbl_credit293"
           },
           "default_entry" : {
-            "action_id" : 8,
+            "action_id" : 7,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
@@ -2548,7 +2462,7 @@
         },
         {
           "name" : "tbl_credit293",
-          "id" : 12,
+          "id" : 11,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 293,
@@ -2562,14 +2476,14 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [12],
+          "action_ids" : [11],
           "actions" : ["credit293"],
           "base_default_next" : "tbl_sendToGroupId_0",
           "next_tables" : {
             "credit293" : "tbl_sendToGroupId_0"
           },
           "default_entry" : {
-            "action_id" : 12,
+            "action_id" : 11,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
@@ -2577,7 +2491,7 @@
         },
         {
           "name" : "tbl_sendToGroupId_0",
-          "id" : 13,
+          "id" : 12,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 294,
@@ -2606,7 +2520,7 @@
         },
         {
           "name" : "tbl_credit296",
-          "id" : 14,
+          "id" : 13,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 296,
@@ -2620,14 +2534,14 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [13],
+          "action_ids" : [12],
           "actions" : ["credit296"],
           "base_default_next" : null,
           "next_tables" : {
             "credit296" : null
           },
           "default_entry" : {
-            "action_id" : 13,
+            "action_id" : 12,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
@@ -2635,7 +2549,7 @@
         },
         {
           "name" : "tbl_sendToGroupId_1",
-          "id" : 15,
+          "id" : 14,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 299,
@@ -2657,35 +2571,6 @@
           },
           "default_entry" : {
             "action_id" : 4,
-            "action_const" : true,
-            "action_data" : [],
-            "action_entry_const" : true
-          }
-        },
-        {
-          "name" : "tbl_sendToGroupId_2",
-          "id" : 16,
-          "source_info" : {
-            "filename" : "/p4c/credit.p4",
-            "line" : 303,
-            "column" : 20,
-            "source_fragment" : "sendToGroupId()"
-          },
-          "key" : [],
-          "match_type" : "exact",
-          "type" : "simple",
-          "max_size" : 1024,
-          "with_counters" : false,
-          "support_timeout" : false,
-          "direct_meters" : null,
-          "action_ids" : [5],
-          "actions" : ["MyIngress.sendToGroupId"],
-          "base_default_next" : null,
-          "next_tables" : {
-            "MyIngress.sendToGroupId" : null
-          },
-          "default_entry" : {
-            "action_id" : 5,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
@@ -2802,72 +2687,6 @@
           "id" : 3,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
-            "line" : 268,
-            "column" : 20,
-            "source_fragment" : "currentTime > oldUpdatedTime + TIME_OUT || currentTime == 0"
-          },
-          "expression" : {
-            "type" : "expression",
-            "value" : {
-              "op" : "or",
-              "left" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : ">",
-                  "left" : {
-                    "type" : "field",
-                    "value" : ["scalars", "currentTime_0"]
-                  },
-                  "right" : {
-                    "type" : "expression",
-                    "value" : {
-                      "op" : "&",
-                      "left" : {
-                        "type" : "expression",
-                        "value" : {
-                          "op" : "+",
-                          "left" : {
-                            "type" : "field",
-                            "value" : ["scalars", "oldUpdatedTime_0"]
-                          },
-                          "right" : {
-                            "type" : "hexstr",
-                            "value" : "0x0000000186a0"
-                          }
-                        }
-                      },
-                      "right" : {
-                        "type" : "hexstr",
-                        "value" : "0xffffffffffff"
-                      }
-                    }
-                  }
-                }
-              },
-              "right" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "==",
-                  "left" : {
-                    "type" : "field",
-                    "value" : ["scalars", "currentTime_0"]
-                  },
-                  "right" : {
-                    "type" : "hexstr",
-                    "value" : "0x000000000000"
-                  }
-                }
-              }
-            }
-          },
-          "true_next" : "tbl_credit269",
-          "false_next" : "tbl_sendToGroupId_2"
-        },
-        {
-          "name" : "node_10",
-          "id" : 4,
-          "source_info" : {
-            "filename" : "/p4c/credit.p4",
             "line" : 277,
             "column" : 24,
             "source_fragment" : "dequeue < n1 && leftOver == 0"
@@ -2907,11 +2726,11 @@
             }
           },
           "true_next" : "tbl_sendCredits",
-          "false_next" : "node_14"
+          "false_next" : "node_12"
         },
         {
-          "name" : "node_14",
-          "id" : 5,
+          "name" : "node_12",
+          "id" : 4,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 282,
@@ -2936,75 +2755,145 @@
           "false_next" : "tbl_credit290"
         },
         {
-          "name" : "node_19",
-          "id" : 6,
+          "name" : "node_17",
+          "id" : 5,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 291,
             "column" : 28,
-            "source_fragment" : "newBalence <= 10"
+            "source_fragment" : "newBalence <= 10 && newBalence >= 2"
           },
           "expression" : {
             "type" : "expression",
             "value" : {
-              "op" : "<=",
+              "op" : "and",
               "left" : {
                 "type" : "expression",
                 "value" : {
-                  "op" : "&",
+                  "op" : "<=",
                   "left" : {
                     "type" : "expression",
                     "value" : {
-                      "op" : "+",
+                      "op" : "&",
                       "left" : {
-                        "type" : "field",
-                        "value" : ["scalars", "leftOver_0"]
-                      },
-                      "right" : {
                         "type" : "expression",
                         "value" : {
-                          "op" : "&",
+                          "op" : "+",
                           "left" : {
-                            "type" : "expression",
-                            "value" : {
-                              "op" : "-",
-                              "left" : {
-                                "type" : "hexstr",
-                                "value" : "0x0000000a"
-                              },
-                              "right" : {
-                                "type" : "expression",
-                                "value" : {
-                                  "op" : "&",
-                                  "left" : {
-                                    "type" : "field",
-                                    "value" : ["scalars", "dequeue_0"]
-                                  },
-                                  "right" : {
-                                    "type" : "hexstr",
-                                    "value" : "0xffffffff"
-                                  }
-                                }
-                              }
-                            }
+                            "type" : "field",
+                            "value" : ["scalars", "leftOver_0"]
                           },
                           "right" : {
-                            "type" : "hexstr",
-                            "value" : "0xffffffff"
+                            "type" : "expression",
+                            "value" : {
+                              "op" : "&",
+                              "left" : {
+                                "type" : "expression",
+                                "value" : {
+                                  "op" : "-",
+                                  "left" : {
+                                    "type" : "hexstr",
+                                    "value" : "0x0000000a"
+                                  },
+                                  "right" : {
+                                    "type" : "expression",
+                                    "value" : {
+                                      "op" : "&",
+                                      "left" : {
+                                        "type" : "field",
+                                        "value" : ["scalars", "dequeue_0"]
+                                      },
+                                      "right" : {
+                                        "type" : "hexstr",
+                                        "value" : "0xffffffff"
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "right" : {
+                                "type" : "hexstr",
+                                "value" : "0xffffffff"
+                              }
+                            }
                           }
                         }
+                      },
+                      "right" : {
+                        "type" : "hexstr",
+                        "value" : "0xffffffff"
                       }
                     }
                   },
                   "right" : {
                     "type" : "hexstr",
-                    "value" : "0xffffffff"
+                    "value" : "0x0000000a"
                   }
                 }
               },
               "right" : {
-                "type" : "hexstr",
-                "value" : "0x0000000a"
+                "type" : "expression",
+                "value" : {
+                  "op" : ">=",
+                  "left" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "&",
+                      "left" : {
+                        "type" : "expression",
+                        "value" : {
+                          "op" : "+",
+                          "left" : {
+                            "type" : "field",
+                            "value" : ["scalars", "leftOver_0"]
+                          },
+                          "right" : {
+                            "type" : "expression",
+                            "value" : {
+                              "op" : "&",
+                              "left" : {
+                                "type" : "expression",
+                                "value" : {
+                                  "op" : "-",
+                                  "left" : {
+                                    "type" : "hexstr",
+                                    "value" : "0x0000000a"
+                                  },
+                                  "right" : {
+                                    "type" : "expression",
+                                    "value" : {
+                                      "op" : "&",
+                                      "left" : {
+                                        "type" : "field",
+                                        "value" : ["scalars", "dequeue_0"]
+                                      },
+                                      "right" : {
+                                        "type" : "hexstr",
+                                        "value" : "0xffffffff"
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "right" : {
+                                "type" : "hexstr",
+                                "value" : "0xffffffff"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "right" : {
+                        "type" : "hexstr",
+                        "value" : "0xffffffff"
+                      }
+                    }
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0x00000002"
+                  }
+                }
               }
             }
           },
@@ -3022,11 +2911,11 @@
         "column" : 8,
         "source_fragment" : "MyEgress"
       },
-      "init_table" : "node_28",
+      "init_table" : "node_25",
       "tables" : [
         {
           "name" : "tbl_removeCUPheader",
-          "id" : 17,
+          "id" : 15,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 392,
@@ -3040,14 +2929,14 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [18],
+          "action_ids" : [16],
           "actions" : ["MyEgress.removeCUPheader"],
           "base_default_next" : "tbl_reduceLeftOver",
           "next_tables" : {
             "MyEgress.removeCUPheader" : "tbl_reduceLeftOver"
           },
           "default_entry" : {
-            "action_id" : 18,
+            "action_id" : 16,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
@@ -3055,7 +2944,7 @@
         },
         {
           "name" : "tbl_reduceLeftOver",
-          "id" : 18,
+          "id" : 16,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 394,
@@ -3069,14 +2958,14 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [21],
+          "action_ids" : [19],
           "actions" : ["MyEgress.reduceLeftOver"],
           "base_default_next" : "tbl_updateQueueDepth",
           "next_tables" : {
             "MyEgress.reduceLeftOver" : "tbl_updateQueueDepth"
           },
           "default_entry" : {
-            "action_id" : 21,
+            "action_id" : 19,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
@@ -3084,7 +2973,7 @@
         },
         {
           "name" : "tbl_updateQueueDepth",
-          "id" : 19,
+          "id" : 17,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 395,
@@ -3098,14 +2987,14 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [19],
+          "action_ids" : [17],
           "actions" : ["MyEgress.updateQueueDepth"],
           "base_default_next" : "tbl_updateEgressTimeInterval",
           "next_tables" : {
             "MyEgress.updateQueueDepth" : "tbl_updateEgressTimeInterval"
           },
           "default_entry" : {
-            "action_id" : 19,
+            "action_id" : 17,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
@@ -3113,7 +3002,7 @@
         },
         {
           "name" : "tbl_updateEgressTimeInterval",
-          "id" : 20,
+          "id" : 18,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 396,
@@ -3127,14 +3016,14 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [20],
+          "action_ids" : [18],
           "actions" : ["MyEgress.updateEgressTimeInterval"],
-          "base_default_next" : "node_34",
+          "base_default_next" : "node_31",
           "next_tables" : {
-            "MyEgress.updateEgressTimeInterval" : "node_34"
+            "MyEgress.updateEgressTimeInterval" : "node_31"
           },
           "default_entry" : {
-            "action_id" : 20,
+            "action_id" : 18,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
@@ -3142,7 +3031,7 @@
         },
         {
           "name" : "tbl_drop_1",
-          "id" : 21,
+          "id" : 19,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 400,
@@ -3156,14 +3045,14 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [17],
+          "action_ids" : [15],
           "actions" : ["MyEgress.drop"],
           "base_default_next" : null,
           "next_tables" : {
             "MyEgress.drop" : null
           },
           "default_entry" : {
-            "action_id" : 17,
+            "action_id" : 15,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
@@ -3173,8 +3062,8 @@
       "action_profiles" : [],
       "conditionals" : [
         {
-          "name" : "node_28",
-          "id" : 7,
+          "name" : "node_25",
+          "id" : 6,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 390,
@@ -3195,12 +3084,12 @@
               }
             }
           },
-          "true_next" : "node_29",
-          "false_next" : "node_34"
+          "true_next" : "node_26",
+          "false_next" : "node_31"
         },
         {
-          "name" : "node_29",
-          "id" : 8,
+          "name" : "node_26",
+          "id" : 7,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 391,
@@ -3222,8 +3111,8 @@
           "false_next" : "tbl_reduceLeftOver"
         },
         {
-          "name" : "node_34",
-          "id" : 9,
+          "name" : "node_31",
+          "id" : 8,
           "source_info" : {
             "filename" : "/p4c/credit.p4",
             "line" : 399,

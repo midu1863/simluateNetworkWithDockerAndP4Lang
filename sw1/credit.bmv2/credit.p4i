@@ -869,7 +869,7 @@ const int n3 = 2*rate;
 const int n2 = 2*n3;
 const int n1 = 2;
 
-const bit<48> TIME_OUT = 100000;
+const bit<48> TIME_OUT = 1000000;
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
@@ -961,10 +961,6 @@ register<bit<48>>(maxPorts) egressTimeInterval;
 
 register<bit<19>>(1) maxQueueLength; //
 
-// control variables to control time ban
-register<bit<1>>(maxPorts) hasTimeBanList;
-register<bit<48>>(maxPorts) timeBanList;
-
 
 /*************************************************************************
 *********************** P A R S E R  ***********************************
@@ -1030,8 +1026,8 @@ control MyIngress(inout headers hdr,
                   inout standard_metadata_t standard_metadata) {
     register<bit<32>>(10) debug;
     register<bit<48>>(maxPorts) lastUpdatedTime;
-
-    bit<1> hasTimeBan = 0;
+    register<bit<1>>(maxPorts) hasTimeBanList;
+    register<bit<48>>(maxPorts) timeBanList;
 
     action drop() {
         mark_to_drop(standard_metadata);
@@ -1121,7 +1117,7 @@ control MyIngress(inout headers hdr,
     register<bit<19>>(2) queue;
 
 
-
+    bit<1> hasTimeBan = 0;
     apply {
 
         bit<48> timeBan = 0;
@@ -1165,7 +1161,7 @@ control MyIngress(inout headers hdr,
       creditValue_t balence = 0;
       ingressCreditCard.read(balence, 1);
 
-      if (currentTime > oldUpdatedTime + TIME_OUT || currentTime == 0) { //if we initial the switch the the time is 0, because no packet aren't send to egress
+      //if (currentTime > oldUpdatedTime + TIME_OUT || currentTime == 0) { //if we initial the switch the the time is 0, because no packet aren't send to egress
        lastUpdatedTime.write(1, currentTime);
        bit<32> giveCreditBalance = 0;
        bit<19> dequeue =0;
@@ -1188,7 +1184,7 @@ control MyIngress(inout headers hdr,
 
        } else {
         creditValue_t newBalence = (leftOver + (10 - ((bit<32>) dequeue)));
-        if (newBalence <= 10) {
+        if (newBalence <= 10 && newBalence >= 2) {
          sendCredits(newBalence);
          creditValue_t oldLeftOver = 0;
          leftOverCreditCard.read(oldLeftOver, 1);
@@ -1204,15 +1200,15 @@ control MyIngress(inout headers hdr,
          }
         }
        }
-      } else {
+      //} else {
        // asking for ingressCreditCard
-       if (hasTimeBan != 1 && balence > 0) {
-        sendToGroupId();
-       } else {
+       /*if (hasTimeBan != 1 && balence > 0) {
+				    sendToGroupId();
+			    } else {
                     drop();
                 }
-
-            }
+                */
+            //}
      }
     }
 }
@@ -1313,16 +1309,10 @@ control MyEgress(inout headers hdr,
             if(hdr.cup.isValid()) {
                 removeCUPheader();
             }
-
-            bit<1> hasTimeBan = 0;
-            hasTimeBanList.read(hasTimeBan, 1);
-            if(hasTimeBan != 1) {
-                reduceLeftOver();
-                reduceCreditBalance();
-            }
-
+            reduceLeftOver();
             updateQueueDepth();
             updateEgressTimeInterval();
+            reduceCreditBalance();
         }
 
         if (standard_metadata.egress_port == 2 && !hdr.cup.isValid()) {

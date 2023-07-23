@@ -305,7 +305,7 @@ control MyIngress(inout headers hdr,
 		    creditValue_t balence = 0;
 		    ingressCreditCard.read(balence, 1);
 
-		    if (currentTime > oldUpdatedTime + TIME_OUT || currentTime == 0) { //if we initial the switch the the time is 0, because no packet aren't send to egress
+		    //if (currentTime > oldUpdatedTime + TIME_OUT || currentTime == 0) { //if we initial the switch the the time is 0, because no packet aren't send to egress
 			    lastUpdatedTime.write(1, currentTime);
 			    bit<32> giveCreditBalance = 0;
 			    bit<19> dequeue =0;
@@ -328,7 +328,7 @@ control MyIngress(inout headers hdr,
 
 			    } else {
 				    creditValue_t newBalence = (leftOver + (10 - ((bit<32>) dequeue)));
-				    if (newBalence <= 10) {
+				    if (newBalence <= 10 && newBalence >= 2) {
 					    sendCredits(newBalence);
 					    creditValue_t oldLeftOver = 0;
 					    leftOverCreditCard.read(oldLeftOver, 1);
@@ -344,15 +344,15 @@ control MyIngress(inout headers hdr,
 					    }
 				    }
 			    }
-		    } else {
+		    //} else {
 			    // asking for ingressCreditCard
-			    if (hasTimeBan != 1 && balence > 0) {
+			    /*if (hasTimeBan != 1 && balence > 0) {
 				    sendToGroupId();
 			    } else {
                     drop();
                 }
-
-            }
+                */
+            //}
 	    }
     }
 }

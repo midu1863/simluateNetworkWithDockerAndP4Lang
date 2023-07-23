@@ -207,14 +207,6 @@ control MyIngress(inout headers hdr,
         default_action = drop();
     }
 
-    action reduce_credit() {
-        creditValue_t balence = 0;
-        ingressCreditCard.read(balence, 1);
-
-        balence = balence - 1;
-        ingressCreditCard.write(1, balence);
-    }
-
     action add_credit() {
         creditValue_t balence;
         ingressCreditCard.read(balence, 1);
@@ -236,6 +228,10 @@ control MyIngress(inout headers hdr,
 
     bit<1> hasTimeBan = 0;
     apply {
+
+        if (!hdr.ipv4.isValid() && !hdr.cup.isValid()) {
+		    drop();
+	    }
 
         bit<48> timeBan = 0;
         timeBanList.read(timeBan, 1);
@@ -268,12 +264,10 @@ control MyIngress(inout headers hdr,
             if (hasTimeBan != 1 && balence > 0) {
                 if (hdr.ipv4.isValid()) {
                     ipv4_lpm.apply();
-                    reduce_credit();
+
                 }
                 if (hdr.arp.isValid()) {
                     mac_exact.apply();
-                    reduce_credit();
-
                 }
             }
         }
@@ -289,7 +283,18 @@ control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {
 
+    action reduce_credit() {
+        creditValue_t balence = 0;
+        ingressCreditCard.read(balence, 1);
+
+        balence = balence - 1;
+        ingressCreditCard.write(1, balence);
+    }
+
     apply {
+        if(standard_metadata.egress_port == 1) {
+            reduce_credit();
+        }
     }
 }
 
