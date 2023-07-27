@@ -1143,7 +1143,7 @@ control MyIngress(inout headers hdr,
         ingressCreditCard.read(balence, 1);
         balence = balence + hdr.cup.creditValue;
         ingressCreditCard.write(1, balence);
-       } else if (hdr.cup.opCode == 0x2) {
+       } else if (hdr.cup.opCode == 0x2 && hasTimeBan == 0) {
                     setTimeBan(hdr.cup.creditValue);
                 }} else {
                     drop();
@@ -1170,7 +1170,7 @@ control MyIngress(inout headers hdr,
        bit<32> leftOver = 0;
        leftOverCreditCard.read(leftOver, 1);
 
-       if (dequeue < n1 && leftOver == 0) {
+       if (dequeue < n1 && leftOver == 1) {
         sendCredits((bit<32>) (10));
         hdr.cup.opCode = 0x1;
         leftOverCreditCard.write(1, 10);
@@ -1183,15 +1183,23 @@ control MyIngress(inout headers hdr,
         }
 
        } else {
-        creditValue_t newBalence = (leftOver + (10 - ((bit<32>) dequeue)));
-        if (newBalence <= 10 && newBalence >= 2) {
+        creditValue_t newBalence = ( (10 - ((bit<32>) dequeue)) - leftOver);
+        if (newBalence <= 10 && newBalence >= 6) {
          sendCredits(newBalence);
          creditValue_t oldLeftOver = 0;
          leftOverCreditCard.read(oldLeftOver, 1);
          leftOverCreditCard.write(1, oldLeftOver + newBalence);
-         hdr.cup.opCode = 0x2;
+         hdr.cup.opCode = 0x1;
          sendToGroupId();
-        } else {
+                    } else if (dequeue == 9) {//send time out to not overwhelm the receiver
+                        bit<32> timeout = 2;
+                        bit<19> second = 0;
+                        egressEnqueueDepth.read(second, 1);
+                        timeout = timeout + ((bit<32>) second);
+                        sendCredits(timeout);
+                        hdr.cup.opCode = 0x2;
+                        sendToGroupId();
+                    } else {
          // asking for ingressCreditCard
          if(hasTimeBan != 1 && balence > 0) {
           sendToGroupId();
@@ -1285,11 +1293,11 @@ control MyEgress(inout headers hdr,
     }
 
     action reduceLeftOver() {
-        creditValue_t balance = 0;
-        leftOverCreditCard.read(balance, 1);
-        balance = balance - 1;
+        creditValue_t balence = 0;
+        leftOverCreditCard.read(balence, 1);
+        balence = balence - 1;
 
-        leftOverCreditCard.write(1, balance);
+        leftOverCreditCard.write(1, balence);
     }
 
     action reduceCreditBalance() {
@@ -1302,9 +1310,6 @@ control MyEgress(inout headers hdr,
 
     apply {
         if (standard_metadata.egress_port == 1) {
-
-            creditValue_t balence = 0;
-            ingressCreditCard.read(balence, 1);
 
             if(hdr.cup.isValid()) {
                 removeCUPheader();

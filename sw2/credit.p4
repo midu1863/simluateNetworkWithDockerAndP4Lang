@@ -274,7 +274,7 @@ control MyIngress(inout headers hdr,
                     bit<32> leftOver = 0;
                     leftOverCreditCard.read(leftOver, 1);
 
-                    if (dequeue < n1 && leftOver == 0) {
+                    if (dequeue < n1 && leftOver == 1) {
                         sendCredits((bit<32>) (10));
                         sendToGroupId();
                         hdr.cup.opCode = 0x1;
@@ -286,9 +286,10 @@ control MyIngress(inout headers hdr,
                         timeout = timeout + ((bit<32>) second);
                         sendCredits(timeout);
                         hdr.cup.opCode = 0x2;
+                        sendToGroupId();
                     } else {
-                        creditValue_t newBalence = (leftOver + (10 - ((bit<32>) dequeue)));
-                        if (newBalence <= 10 && newBalence >= 2) {
+                        creditValue_t newBalence = ( (10 - ((bit<32>) dequeue)) - leftOver);
+                        if (newBalence <= 10 && newBalence >= 6) {
                             sendCredits(newBalence);
                             hdr.cup.opCode = 0x1;
                             sendToGroupId();

@@ -215,24 +215,6 @@ control MyIngress(inout headers hdr,
         default_action = drop();
     }
 
-    /*
-    action reduce_credit() {
-        credtiValue_t balence;
-        //creditCard.read(balence, 1);
-
-        balence = balence - 1;
-        //creditCard.write(1, balence);
-    }
-
-    action add_credit() {
-        credtiValue_t balence;
-        //creditCard.read(balence, 1);
-
-        balence = balence + hdr.cup.creditValue;
-        //creditCard.write(1, balence);
-    }
-    */
-
      action sendToGroupId() {
         standard_metadata.mcast_grp = 1;
     }
@@ -297,16 +279,9 @@ control MyIngress(inout headers hdr,
 		    //Order Credit if needed
 		    bit<19> queueing = standard_metadata.deq_qdepth;
 
-		    //check time interval 2 sec.
-		    bit<48> currentTime=0;
-		    egressTimeInterval.read(currentTime, 1);
-		    bit<48> oldUpdatedTime=0;
-		    lastUpdatedTime.read(oldUpdatedTime, 1);
 		    creditValue_t balence = 0;
 		    ingressCreditCard.read(balence, 1);
 
-		    //if (currentTime > oldUpdatedTime + TIME_OUT || currentTime == 0) { //if we initial the switch the the time is 0, because no packet aren't send to egress
-			    lastUpdatedTime.write(1, currentTime);
 			    bit<32> giveCreditBalance = 0;
 			    bit<19> dequeue =0;
 			    egressDequeueDepth.read(dequeue, 1);
@@ -352,15 +327,6 @@ control MyIngress(inout headers hdr,
 					    }
 				    }
 			    }
-		    //} else {
-			    // asking for ingressCreditCard
-			    /*if (hasTimeBan != 1 && balence > 0) {
-				    sendToGroupId();
-			    } else {
-                    drop();
-                }
-                */
-            //}
 	    }
     }
 }
@@ -544,4 +510,5 @@ MyEgress(),
 MyComputeChecksum(),
 MyDeparser()
 ) main;
+
 

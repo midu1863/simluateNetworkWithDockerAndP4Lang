@@ -246,6 +246,7 @@ control MyIngress(inout headers hdr,
         if (!hdr.ipv4.isValid() && !hdr.cup.isValid()) {
             drop();
         }
+
         creditValue_t balence = 0;
         ingressCreditCard.read(balence, 1);
         switchId_t id;
@@ -255,8 +256,10 @@ control MyIngress(inout headers hdr,
             if (hdr.cup.dstSwitchId == id) {
                 if (hdr.cup.opCode == 0x1) {
                     add_credit();
-                } else if (hdr.cup.opCode == 0x2) {
+                    drop();
+                } else if (hdr.cup.opCode == 0x2 && hasTimeBan == 0) {
                     setTimeBan(hdr.cup.creditValue);
+                    drop();
                 }} else {
                     drop();
                 }
@@ -264,7 +267,6 @@ control MyIngress(inout headers hdr,
             if (hasTimeBan != 1 && balence > 0) {
                 if (hdr.ipv4.isValid()) {
                     ipv4_lpm.apply();
-
                 }
                 if (hdr.arp.isValid()) {
                     mac_exact.apply();

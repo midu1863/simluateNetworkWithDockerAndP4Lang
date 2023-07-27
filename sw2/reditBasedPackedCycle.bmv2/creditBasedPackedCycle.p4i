@@ -1,6 +1,6 @@
-# 1 "/p4c/credit.p4"
+# 1 "/p4c/creditBasedPackedCycle.p4"
 # 1 "<built-in>" 1
-# 1 "/p4c/credit.p4" 2
+# 1 "/p4c/creditBasedPackedCycle.p4" 2
 /* -*- P4_16 -*- */
 
 # 1 "/usr/local/share/p4c/p4include/core.p4" 1
@@ -97,7 +97,7 @@ extern bool static_assert(bool check, string message);
 
 /// Like the above but using a default message.
 extern bool static_assert(bool check);
-# 3 "/p4c/credit.p4" 2
+# 3 "/p4c/creditBasedPackedCycle.p4" 2
 # 1 "/usr/local/share/p4c/p4include/v1model.p4" 1
 /*
 Copyright 2013-present Barefoot Networks, Inc.
@@ -856,7 +856,7 @@ package V1Switch<H, M>(Parser<H, M> p,
                        ComputeChecksum<H, M> ck,
                        Deparser<H> dep
                        );
-# 4 "/p4c/credit.p4" 2
+# 4 "/p4c/creditBasedPackedCycle.p4" 2
 
 const bit<16> TYPE_IPV4 = 0x0800;
 const bit<16> TYPE_ARP = 0x0806;
@@ -1069,25 +1069,7 @@ control MyIngress(inout headers hdr,
         default_action = drop();
     }
 
-    /*
-    action reduce_credit() {
-        credtiValue_t balence;
-        //creditCard.read(balence, 1);
-
-        balence = balence - 1;
-        //creditCard.write(1, balence);
-    }
-
-    action add_credit() {
-        credtiValue_t balence;
-        //creditCard.read(balence, 1);
-
-        balence = balence + hdr.cup.creditValue;
-        //creditCard.write(1, balence);
-    }
-    */
-
-     action sendToGroupId() {
+    action sendToGroupId() {
         standard_metadata.mcast_grp = 1;
     }
 
@@ -1113,16 +1095,6 @@ control MyIngress(inout headers hdr,
             drop();
         } else {
             if(standard_metadata.egress_port == 0) {
-                //Order Credit if needed
-                bit<19> queueing = standard_metadata.deq_qdepth;
-
-                //check time interval 2 sec.
-                bit<48> currentTime=0;
-                egressTimeInterval.read(currentTime, 1);
-                bit<48> oldUpdatedTime=0;
-                lastUpdatedTime.read(oldUpdatedTime, 1);
-                //if (currentTime > oldUpdatedTime + TIME_OUT || currentTime == 0) { //if we initial the switch the the time is 0, because no packets are send to egress
-                    lastUpdatedTime.write(1, currentTime);
                     bit<32> giveCreditBalance = 0;
                     bit<19> dequeue =0;
                     egressDequeueDepth.read(dequeue, 1);
@@ -1156,51 +1128,10 @@ control MyIngress(inout headers hdr,
                             sendToGroupId();
                         }
                     }
-                //} else {
-                    //sendToGroupId();
-                //}
             }
 
 
         }
-
-
-        /*
-        queue.write(0, standard_metadata.enq_qdepth);
-        queue.write(1, standard_metadata.deq_qdepth);
-        if (queueing < 5 && !hdr.cup.isValid()) {
-            if(hdr.ipv4.isValid() && hdr.ipv4.srcAddr == 0x0a0a0003) {
-                sendCredits();
-                sendToGroupId();
-            }
-        }
-        /*
-        credtiValue_t balence = 0;
-        creditCard.read(balence, 1);
-        switchId_t id;
-        switchId.read(id, 0);
-
-
-        if (hdr.ipv4.isValid() && hdr.cup.isValid()) {
-            if (hdr.cup.dstSwitchId == id) {
-                add_credit();
-                drop();
-            } else {
-                hdr.cup.setInvalid();
-
-            }
-        }
-
-        if (balence>0) {
-            if (hdr.ipv4.isValid()) {
-                ipv4_lpm.apply();
-                reduce_credit();
-            }
-            if (hdr.arp.isValid()) {
-                mac_exact.apply();
-                reduce_credit();
-            }
-        }*/
 
     }
 }
@@ -1250,7 +1181,6 @@ control MyEgress(inout headers hdr,
             }
             reduceLeftOver();
             updateQueueDepth();
-            updateEgressTimeInterval();
         }
 
         if (standard_metadata.egress_port == 2 && !hdr.cup.isValid()) {
