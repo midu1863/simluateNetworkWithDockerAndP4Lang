@@ -170,7 +170,8 @@ control MyIngress(inout headers hdr,
     }
 
     action add_mcast_grp() {
-        standard_metadata.mcast_grp = 1;
+        //standard_metadata.mcast_grp = 1;
+        clone(CloneType.I2E, 1);
     }
 
     action ipv4_forward(egressSpec_t port) {
@@ -264,14 +265,15 @@ control MyIngress(inout headers hdr,
                     drop();
                 }
             } else {
-            if (hasTimeBan != 1 && balence > 0) {
+            //if (hasTimeBan != 1 && balence > 0) {
                 if (hdr.ipv4.isValid()) {
+                    add_mcast_grp();
                     ipv4_lpm.apply();
                 }
                 if (hdr.arp.isValid()) {
                     mac_exact.apply();
                 }
-            }
+            //}
         }
 
     }

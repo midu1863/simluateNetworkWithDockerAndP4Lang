@@ -4,13 +4,11 @@
       "name" : "scalars_0",
       "id" : 0,
       "fields" : [
-        ["tmp", 48, false],
+        ["tmp", 32, false],
+        ["sending2Port_0", 32, false],
         ["balence_0", 32, false],
-        ["hasTimeBan_0", 1, false],
-        ["timeBan_0", 48, false],
         ["balence_1", 32, false],
-        ["id_0", 32, false],
-        ["balence_2", 32, false],
+        ["switch_0_key", 16, false],
         ["metadata.ingress_port", 9, false],
         ["metadata.egress_spec", 9, false],
         ["metadata.egress_port", 9, false],
@@ -27,7 +25,7 @@
         ["metadata.checksum_error", 1, false],
         ["metadata.parser_error", 32, false],
         ["metadata.priority", 3, false],
-        ["_padding_0", 2, false]
+        ["_padding_0", 3, false]
       ]
     },
     {
@@ -99,9 +97,6 @@
       "name" : "cup_t",
       "id" : 5,
       "fields" : [
-        ["srcSwitchId", 32, false],
-        ["dstSwitchId", 32, false],
-        ["opCode", 32, false],
         ["creditValue", 32, false]
       ]
     }
@@ -200,7 +195,7 @@
             },
             {
               "type" : "hexstr",
-              "value" : "0x0100",
+              "value" : "0x0101",
               "mask" : null,
               "next_state" : "parse_cup"
             },
@@ -323,7 +318,7 @@
       "id" : 0,
       "source_info" : {
         "filename" : "/p4c/creditBasedPackedCycle.p4",
-        "line" : 331,
+        "line" : 282,
         "column" : 8,
         "source_fragment" : "MyDeparser"
       },
@@ -339,7 +334,7 @@
       "id" : 0,
       "source_info" : {
         "filename" : "/p4c/creditBasedPackedCycle.p4",
-        "line" : 163,
+        "line" : 152,
         "column" : 26,
         "source_fragment" : "debug"
       },
@@ -347,88 +342,16 @@
       "bitwidth" : 48
     },
     {
-      "name" : "MyIngress.lastUpdatedTime",
+      "name" : "ingressCreditCard",
       "id" : 1,
       "source_info" : {
         "filename" : "/p4c/creditBasedPackedCycle.p4",
-        "line" : 165,
-        "column" : 32,
-        "source_fragment" : "lastUpdatedTime"
-      },
-      "size" : 3,
-      "bitwidth" : 48
-    },
-    {
-      "name" : "MyIngress.hasTimeBanList",
-      "id" : 2,
-      "source_info" : {
-        "filename" : "/p4c/creditBasedPackedCycle.p4",
-        "line" : 166,
-        "column" : 31,
-        "source_fragment" : "hasTimeBanList"
-      },
-      "size" : 3,
-      "bitwidth" : 1
-    },
-    {
-      "name" : "MyIngress.timeBanList",
-      "id" : 3,
-      "source_info" : {
-        "filename" : "/p4c/creditBasedPackedCycle.p4",
-        "line" : 167,
-        "column" : 32,
-        "source_fragment" : "timeBanList"
-      },
-      "size" : 3,
-      "bitwidth" : 48
-    },
-    {
-      "name" : "switchId",
-      "id" : 4,
-      "source_info" : {
-        "filename" : "/p4c/creditBasedPackedCycle.p4",
-        "line" : 95,
-        "column" : 24,
-        "source_fragment" : "switchId"
-      },
-      "size" : 1,
-      "bitwidth" : 32
-    },
-    {
-      "name" : "portSwitchMapping",
-      "id" : 5,
-      "source_info" : {
-        "filename" : "/p4c/creditBasedPackedCycle.p4",
-        "line" : 96,
-        "column" : 31,
-        "source_fragment" : "portSwitchMapping"
-      },
-      "size" : 3,
-      "bitwidth" : 32
-    },
-    {
-      "name" : "ingressCreditCard",
-      "id" : 6,
-      "source_info" : {
-        "filename" : "/p4c/creditBasedPackedCycle.p4",
-        "line" : 97,
+        "line" : 87,
         "column" : 28,
         "source_fragment" : "ingressCreditCard"
       },
       "size" : 3,
       "bitwidth" : 32
-    },
-    {
-      "name" : "maxQueueLength",
-      "id" : 7,
-      "source_info" : {
-        "filename" : "/p4c/creditBasedPackedCycle.p4",
-        "line" : 98,
-        "column" : 21,
-        "source_fragment" : "maxQueueLength"
-      },
-      "size" : 1,
-      "bitwidth" : 19
     }
   ],
   "calculations" : [],
@@ -461,7 +384,7 @@
           ],
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 169,
+            "line" : 156,
             "column" : 8,
             "source_fragment" : "mark_to_drop(standard_metadata)"
           }
@@ -483,7 +406,7 @@
           ],
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 169,
+            "line" : 156,
             "column" : 8,
             "source_fragment" : "mark_to_drop(standard_metadata)"
           }
@@ -505,95 +428,7 @@
           ],
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 169,
-            "column" : 8,
-            "source_fragment" : "mark_to_drop(standard_metadata)"
-          }
-        }
-      ]
-    },
-    {
-      "name" : "MyIngress.drop",
-      "id" : 5,
-      "runtime_data" : [],
-      "primitives" : [
-        {
-          "op" : "mark_to_drop",
-          "parameters" : [
-            {
-              "type" : "header",
-              "value" : "standard_metadata"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 169,
-            "column" : 8,
-            "source_fragment" : "mark_to_drop(standard_metadata)"
-          }
-        }
-      ]
-    },
-    {
-      "name" : "MyIngress.drop",
-      "id" : 6,
-      "runtime_data" : [],
-      "primitives" : [
-        {
-          "op" : "mark_to_drop",
-          "parameters" : [
-            {
-              "type" : "header",
-              "value" : "standard_metadata"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 169,
-            "column" : 8,
-            "source_fragment" : "mark_to_drop(standard_metadata)"
-          }
-        }
-      ]
-    },
-    {
-      "name" : "MyIngress.drop",
-      "id" : 7,
-      "runtime_data" : [],
-      "primitives" : [
-        {
-          "op" : "mark_to_drop",
-          "parameters" : [
-            {
-              "type" : "header",
-              "value" : "standard_metadata"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 169,
-            "column" : 8,
-            "source_fragment" : "mark_to_drop(standard_metadata)"
-          }
-        }
-      ]
-    },
-    {
-      "name" : "MyIngress.drop",
-      "id" : 8,
-      "runtime_data" : [],
-      "primitives" : [
-        {
-          "op" : "mark_to_drop",
-          "parameters" : [
-            {
-              "type" : "header",
-              "value" : "standard_metadata"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 169,
+            "line" : 156,
             "column" : 8,
             "source_fragment" : "mark_to_drop(standard_metadata)"
           }
@@ -602,7 +437,7 @@
     },
     {
       "name" : "MyIngress.ipv4_forward",
-      "id" : 9,
+      "id" : 5,
       "runtime_data" : [
         {
           "name" : "port",
@@ -624,39 +459,48 @@
           ],
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 177,
+            "line" : 160,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = port"
           }
         },
         {
-          "op" : "register_write",
+          "op" : "assign",
           "parameters" : [
             {
-              "type" : "register_array",
-              "value" : "MyIngress.debug"
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x00000000"
-            },
-            {
               "type" : "field",
-              "value" : ["standard_metadata", "ingress_global_timestamp"]
+              "value" : ["scalars", "sending2Port_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "&",
+                  "left" : {
+                    "type" : "local",
+                    "value" : 0
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0xffffffff"
+                  }
+                }
+              }
             }
           ],
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 178,
+            "line" : 161,
             "column" : 8,
-            "source_fragment" : "debug.write(0,standard_metadata.ingress_global_timestamp)"
+            "source_fragment" : "sending2Port = (bit<32>) port"
           }
         }
       ]
     },
     {
       "name" : "MyIngress.mac_forward",
-      "id" : 10,
+      "id" : 6,
       "runtime_data" : [
         {
           "name" : "port",
@@ -678,16 +522,48 @@
           ],
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 195,
+            "line" : 178,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = port"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "sending2Port_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "&",
+                  "left" : {
+                    "type" : "local",
+                    "value" : 0
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0xffffffff"
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/creditBasedPackedCycle.p4",
+            "line" : 179,
+            "column" : 8,
+            "source_fragment" : "sending2Port = (bit<32>) port"
           }
         }
       ]
     },
     {
-      "name" : "MyIngress.add_credit",
-      "id" : 11,
+      "name" : "MyIngress.reduce_credit",
+      "id" : 7,
       "runtime_data" : [],
       "primitives" : [
         {
@@ -702,15 +578,15 @@
               "value" : "ingressCreditCard"
             },
             {
-              "type" : "hexstr",
-              "value" : "0x00000001"
+              "type" : "field",
+              "value" : ["scalars", "sending2Port_0"]
             }
           ],
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 212,
+            "line" : 208,
             "column" : 8,
-            "source_fragment" : "ingressCreditCard.read(balence, 1)"
+            "source_fragment" : "ingressCreditCard.read(balence, port)"
           }
         },
         {
@@ -735,361 +611,6 @@
                         "value" : ["scalars", "balence_0"]
                       },
                       "right" : {
-                        "type" : "field",
-                        "value" : ["cup", "creditValue"]
-                      }
-                    }
-                  },
-                  "right" : {
-                    "type" : "hexstr",
-                    "value" : "0xffffffff"
-                  }
-                }
-              }
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 214,
-            "column" : 8,
-            "source_fragment" : "balence = balence + hdr.cup.creditValue"
-          }
-        },
-        {
-          "op" : "register_write",
-          "parameters" : [
-            {
-              "type" : "register_array",
-              "value" : "ingressCreditCard"
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x00000001"
-            },
-            {
-              "type" : "field",
-              "value" : ["scalars", "balence_0"]
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 215,
-            "column" : 8,
-            "source_fragment" : "ingressCreditCard.write(1, balence)"
-          }
-        }
-      ]
-    },
-    {
-      "name" : "MyIngress.setTimeBan",
-      "id" : 12,
-      "runtime_data" : [],
-      "primitives" : [
-        {
-          "op" : "register_write",
-          "parameters" : [
-            {
-              "type" : "register_array",
-              "value" : "MyIngress.hasTimeBanList"
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x00000001"
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x01"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 224,
-            "column" : 8,
-            "source_fragment" : "hasTimeBanList.write(1, 1)"
-          }
-        },
-        {
-          "op" : "assign",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["scalars", "tmp"]
-            },
-            {
-              "type" : "expression",
-              "value" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "&",
-                  "left" : {
-                    "type" : "expression",
-                    "value" : {
-                      "op" : "+",
-                      "left" : {
-                        "type" : "field",
-                        "value" : ["standard_metadata", "ingress_global_timestamp"]
-                      },
-                      "right" : {
-                        "type" : "expression",
-                        "value" : {
-                          "op" : "&",
-                          "left" : {
-                            "type" : "expression",
-                            "value" : {
-                              "op" : "*",
-                              "left" : {
-                                "type" : "hexstr",
-                                "value" : "0x0000000f4240"
-                              },
-                              "right" : {
-                                "type" : "expression",
-                                "value" : {
-                                  "op" : "&",
-                                  "left" : {
-                                    "type" : "field",
-                                    "value" : ["cup", "creditValue"]
-                                  },
-                                  "right" : {
-                                    "type" : "hexstr",
-                                    "value" : "0xffffffffffff"
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          "right" : {
-                            "type" : "hexstr",
-                            "value" : "0xffffffffffff"
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "right" : {
-                    "type" : "hexstr",
-                    "value" : "0xffffffffffff"
-                  }
-                }
-              }
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 225,
-            "column" : 29,
-            "source_fragment" : "newTime"
-          }
-        },
-        {
-          "op" : "register_write",
-          "parameters" : [
-            {
-              "type" : "register_array",
-              "value" : "MyIngress.timeBanList"
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x00000001"
-            },
-            {
-              "type" : "field",
-              "value" : ["scalars", "tmp"]
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 225,
-            "column" : 8,
-            "source_fragment" : "timeBanList.write(1, newTime)"
-          }
-        }
-      ]
-    },
-    {
-      "name" : "creditBasedPackedCycle240",
-      "id" : 13,
-      "runtime_data" : [],
-      "primitives" : [
-        {
-          "op" : "assign",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["scalars", "hasTimeBan_0"]
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x01"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 240,
-            "column" : 12,
-            "source_fragment" : "hasTimeBan = 1"
-          }
-        }
-      ]
-    },
-    {
-      "name" : "creditBasedPackedCycle242",
-      "id" : 14,
-      "runtime_data" : [],
-      "primitives" : [
-        {
-          "op" : "assign",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["scalars", "hasTimeBan_0"]
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x00"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 242,
-            "column" : 12,
-            "source_fragment" : "hasTimeBan = 0"
-          }
-        }
-      ]
-    },
-    {
-      "name" : "creditBasedPackedCycle237",
-      "id" : 15,
-      "runtime_data" : [],
-      "primitives" : [
-        {
-          "op" : "register_read",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["scalars", "timeBan_0"]
-            },
-            {
-              "type" : "register_array",
-              "value" : "MyIngress.timeBanList"
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x00000001"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 237,
-            "column" : 8,
-            "source_fragment" : "timeBanList.read(timeBan, 1)"
-          }
-        }
-      ]
-    },
-    {
-      "name" : "creditBasedPackedCycle251",
-      "id" : 16,
-      "runtime_data" : [],
-      "primitives" : [
-        {
-          "op" : "register_read",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["scalars", "balence_1"]
-            },
-            {
-              "type" : "register_array",
-              "value" : "ingressCreditCard"
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x00000001"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 251,
-            "column" : 8,
-            "source_fragment" : "ingressCreditCard.read(balence, 1)"
-          }
-        },
-        {
-          "op" : "register_read",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["scalars", "id_0"]
-            },
-            {
-              "type" : "register_array",
-              "value" : "switchId"
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x00000000"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 253,
-            "column" : 8,
-            "source_fragment" : "switchId.read(id, 0)"
-          }
-        }
-      ]
-    },
-    {
-      "name" : "MyEgress.reduce_credit",
-      "id" : 17,
-      "runtime_data" : [],
-      "primitives" : [
-        {
-          "op" : "register_read",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["scalars", "balence_2"]
-            },
-            {
-              "type" : "register_array",
-              "value" : "ingressCreditCard"
-            },
-            {
-              "type" : "hexstr",
-              "value" : "0x00000001"
-            }
-          ],
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 290,
-            "column" : 8,
-            "source_fragment" : "ingressCreditCard.read(balence, 1)"
-          }
-        },
-        {
-          "op" : "assign",
-          "parameters" : [
-            {
-              "type" : "field",
-              "value" : ["scalars", "balence_2"]
-            },
-            {
-              "type" : "expression",
-              "value" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "&",
-                  "left" : {
-                    "type" : "expression",
-                    "value" : {
-                      "op" : "+",
-                      "left" : {
-                        "type" : "field",
-                        "value" : ["scalars", "balence_2"]
-                      },
-                      "right" : {
                         "type" : "hexstr",
                         "value" : "0xffffffff"
                       }
@@ -1105,7 +626,7 @@
           ],
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 292,
+            "line" : 210,
             "column" : 8,
             "source_fragment" : "balence = balence - 1"
           }
@@ -1118,19 +639,187 @@
               "value" : "ingressCreditCard"
             },
             {
-              "type" : "hexstr",
-              "value" : "0x00000001"
+              "type" : "field",
+              "value" : ["scalars", "sending2Port_0"]
             },
             {
               "type" : "field",
-              "value" : ["scalars", "balence_2"]
+              "value" : ["scalars", "balence_0"]
             }
           ],
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 293,
+            "line" : 211,
             "column" : 8,
-            "source_fragment" : "ingressCreditCard.write(1, balence)"
+            "source_fragment" : "ingressCreditCard.write(port, balence)"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "MyIngress.handleCredit",
+      "id" : 8,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "&",
+                  "left" : {
+                    "type" : "field",
+                    "value" : ["standard_metadata", "ingress_port"]
+                  },
+                  "right" : {
+                    "type" : "hexstr",
+                    "value" : "0xffffffff"
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/creditBasedPackedCycle.p4",
+            "line" : 216,
+            "column" : 32,
+            "source_fragment" : "(bit<32>) standard_metadata.ingress_port"
+          }
+        },
+        {
+          "op" : "register_write",
+          "parameters" : [
+            {
+              "type" : "register_array",
+              "value" : "ingressCreditCard"
+            },
+            {
+              "type" : "field",
+              "value" : ["scalars", "tmp"]
+            },
+            {
+              "type" : "field",
+              "value" : ["cup", "creditValue"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/creditBasedPackedCycle.p4",
+            "line" : 216,
+            "column" : 8,
+            "source_fragment" : "ingressCreditCard.write((bit<32>) standard_metadata.ingress_port, hdr.cup.creditValue)"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "switch_0_case",
+      "id" : 9,
+      "runtime_data" : [],
+      "primitives" : []
+    },
+    {
+      "name" : "switch_0_case_0",
+      "id" : 10,
+      "runtime_data" : [],
+      "primitives" : []
+    },
+    {
+      "name" : "switch_0_case_1",
+      "id" : 11,
+      "runtime_data" : [],
+      "primitives" : []
+    },
+    {
+      "name" : "switch_0_case_2",
+      "id" : 12,
+      "runtime_data" : [],
+      "primitives" : []
+    },
+    {
+      "name" : "creditBasedPackedCycle221",
+      "id" : 13,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "switch_0_key"]
+            },
+            {
+              "type" : "field",
+              "value" : ["ethernet", "etherType"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/creditBasedPackedCycle.p4",
+            "line" : 221,
+            "column" : 8,
+            "source_fragment" : "switch (hdr.ethernet.etherType"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "creditBasedPackedCycle153",
+      "id" : 14,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "sending2Port_0"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0xffffffff"
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/creditBasedPackedCycle.p4",
+            "line" : 153,
+            "column" : 4,
+            "source_fragment" : "bit<32> sending2Port = 0xFFFFFFFF;"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "creditBasedPackedCycle229",
+      "id" : 15,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "register_read",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "balence_1"]
+            },
+            {
+              "type" : "register_array",
+              "value" : "ingressCreditCard"
+            },
+            {
+              "type" : "field",
+              "value" : ["scalars", "sending2Port_0"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "/p4c/creditBasedPackedCycle.p4",
+            "line" : 229,
+            "column" : 8,
+            "source_fragment" : "ingressCreditCard.read(balence, sending2Port)"
           }
         }
       ]
@@ -1142,107 +831,20 @@
       "id" : 0,
       "source_info" : {
         "filename" : "/p4c/creditBasedPackedCycle.p4",
-        "line" : 160,
+        "line" : 149,
         "column" : 8,
         "source_fragment" : "MyIngress"
       },
-      "init_table" : "node_2",
+      "init_table" : "tbl_creditBasedPackedCycle153",
       "tables" : [
         {
-          "name" : "tbl_drop",
+          "name" : "tbl_creditBasedPackedCycle153",
           "id" : 0,
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 233,
-            "column" : 6,
-            "source_fragment" : "drop()"
-          },
-          "key" : [],
-          "match_type" : "exact",
-          "type" : "simple",
-          "max_size" : 1024,
-          "with_counters" : false,
-          "support_timeout" : false,
-          "direct_meters" : null,
-          "action_ids" : [4],
-          "actions" : ["MyIngress.drop"],
-          "base_default_next" : "tbl_creditBasedPackedCycle237",
-          "next_tables" : {
-            "MyIngress.drop" : "tbl_creditBasedPackedCycle237"
-          },
-          "default_entry" : {
-            "action_id" : 4,
-            "action_const" : true,
-            "action_data" : [],
-            "action_entry_const" : true
-          }
-        },
-        {
-          "name" : "tbl_creditBasedPackedCycle237",
-          "id" : 1,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 237,
-            "column" : 8,
-            "source_fragment" : "timeBanList.read(timeBan, 1)"
-          },
-          "key" : [],
-          "match_type" : "exact",
-          "type" : "simple",
-          "max_size" : 1024,
-          "with_counters" : false,
-          "support_timeout" : false,
-          "direct_meters" : null,
-          "action_ids" : [15],
-          "actions" : ["creditBasedPackedCycle237"],
-          "base_default_next" : "node_5",
-          "next_tables" : {
-            "creditBasedPackedCycle237" : "node_5"
-          },
-          "default_entry" : {
-            "action_id" : 15,
-            "action_const" : true,
-            "action_data" : [],
-            "action_entry_const" : true
-          }
-        },
-        {
-          "name" : "tbl_creditBasedPackedCycle240",
-          "id" : 2,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 240,
-            "column" : 23,
-            "source_fragment" : "="
-          },
-          "key" : [],
-          "match_type" : "exact",
-          "type" : "simple",
-          "max_size" : 1024,
-          "with_counters" : false,
-          "support_timeout" : false,
-          "direct_meters" : null,
-          "action_ids" : [13],
-          "actions" : ["creditBasedPackedCycle240"],
-          "base_default_next" : "node_8",
-          "next_tables" : {
-            "creditBasedPackedCycle240" : "node_8"
-          },
-          "default_entry" : {
-            "action_id" : 13,
-            "action_const" : true,
-            "action_data" : [],
-            "action_entry_const" : true
-          }
-        },
-        {
-          "name" : "tbl_creditBasedPackedCycle242",
-          "id" : 3,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 242,
-            "column" : 23,
-            "source_fragment" : "="
+            "line" : 153,
+            "column" : 4,
+            "source_fragment" : "bit<32> sending2Port = 0xFFFFFFFF;"
           },
           "key" : [],
           "match_type" : "exact",
@@ -1252,10 +854,10 @@
           "support_timeout" : false,
           "direct_meters" : null,
           "action_ids" : [14],
-          "actions" : ["creditBasedPackedCycle242"],
-          "base_default_next" : "node_8",
+          "actions" : ["creditBasedPackedCycle153"],
+          "base_default_next" : "tbl_creditBasedPackedCycle221",
           "next_tables" : {
-            "creditBasedPackedCycle242" : "node_8"
+            "creditBasedPackedCycle153" : "tbl_creditBasedPackedCycle221"
           },
           "default_entry" : {
             "action_id" : 14,
@@ -1265,42 +867,13 @@
           }
         },
         {
-          "name" : "tbl_drop_0",
-          "id" : 4,
+          "name" : "tbl_creditBasedPackedCycle221",
+          "id" : 1,
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 247,
-            "column" : 12,
-            "source_fragment" : "drop()"
-          },
-          "key" : [],
-          "match_type" : "exact",
-          "type" : "simple",
-          "max_size" : 1024,
-          "with_counters" : false,
-          "support_timeout" : false,
-          "direct_meters" : null,
-          "action_ids" : [5],
-          "actions" : ["MyIngress.drop"],
-          "base_default_next" : "tbl_creditBasedPackedCycle251",
-          "next_tables" : {
-            "MyIngress.drop" : "tbl_creditBasedPackedCycle251"
-          },
-          "default_entry" : {
-            "action_id" : 5,
-            "action_const" : true,
-            "action_data" : [],
-            "action_entry_const" : true
-          }
-        },
-        {
-          "name" : "tbl_creditBasedPackedCycle251",
-          "id" : 5,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 251,
+            "line" : 221,
             "column" : 8,
-            "source_fragment" : "ingressCreditCard.read(balence, 1); ..."
+            "source_fragment" : "switch"
           },
           "key" : [],
           "match_type" : "exact",
@@ -1309,170 +882,160 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [16],
-          "actions" : ["creditBasedPackedCycle251"],
-          "base_default_next" : "node_11",
+          "action_ids" : [13],
+          "actions" : ["creditBasedPackedCycle221"],
+          "base_default_next" : "switch_0_table",
           "next_tables" : {
-            "creditBasedPackedCycle251" : "node_11"
+            "creditBasedPackedCycle221" : "switch_0_table"
           },
           "default_entry" : {
-            "action_id" : 16,
+            "action_id" : 13,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
           }
         },
         {
-          "name" : "tbl_add_credit",
-          "id" : 6,
+          "name" : "switch_0_table",
+          "id" : 2,
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 258,
-            "column" : 20,
-            "source_fragment" : "add_credit()"
+            "line" : 221,
+            "column" : 8,
+            "source_fragment" : "switch"
           },
-          "key" : [],
+          "key" : [
+            {
+              "match_type" : "exact",
+              "target" : ["scalars", "switch_0_key"],
+              "mask" : null
+            }
+          ],
           "match_type" : "exact",
           "type" : "simple",
-          "max_size" : 1024,
+          "max_size" : 3,
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [11],
-          "actions" : ["MyIngress.add_credit"],
-          "base_default_next" : "tbl_drop_1",
+          "action_ids" : [9, 10, 11, 12],
+          "actions" : ["switch_0_case", "switch_0_case_0", "switch_0_case_1", "switch_0_case_2"],
+          "base_default_next" : "tbl_creditBasedPackedCycle229",
           "next_tables" : {
-            "MyIngress.add_credit" : "tbl_drop_1"
-          },
-          "default_entry" : {
-            "action_id" : 11,
-            "action_const" : true,
-            "action_data" : [],
-            "action_entry_const" : true
-          }
-        },
-        {
-          "name" : "tbl_drop_1",
-          "id" : 7,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 259,
-            "column" : 20,
-            "source_fragment" : "drop()"
-          },
-          "key" : [],
-          "match_type" : "exact",
-          "type" : "simple",
-          "max_size" : 1024,
-          "with_counters" : false,
-          "support_timeout" : false,
-          "direct_meters" : null,
-          "action_ids" : [6],
-          "actions" : ["MyIngress.drop"],
-          "base_default_next" : null,
-          "next_tables" : {
-            "MyIngress.drop" : null
-          },
-          "default_entry" : {
-            "action_id" : 6,
-            "action_const" : true,
-            "action_data" : [],
-            "action_entry_const" : true
-          }
-        },
-        {
-          "name" : "tbl_setTimeBan",
-          "id" : 8,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 261,
-            "column" : 20,
-            "source_fragment" : "setTimeBan(hdr.cup.creditValue)"
-          },
-          "key" : [],
-          "match_type" : "exact",
-          "type" : "simple",
-          "max_size" : 1024,
-          "with_counters" : false,
-          "support_timeout" : false,
-          "direct_meters" : null,
-          "action_ids" : [12],
-          "actions" : ["MyIngress.setTimeBan"],
-          "base_default_next" : "tbl_drop_2",
-          "next_tables" : {
-            "MyIngress.setTimeBan" : "tbl_drop_2"
+            "switch_0_case" : "MyIngress.mac_lpm",
+            "switch_0_case_0" : "MyIngress.ipv4_lpm",
+            "switch_0_case_1" : "tbl_handleCredit",
+            "switch_0_case_2" : "tbl_creditBasedPackedCycle229"
           },
           "default_entry" : {
             "action_id" : 12,
             "action_const" : true,
             "action_data" : [],
             "action_entry_const" : true
-          }
+          },
+          "entries" : [
+            {
+              "source_info" : {
+                "filename" : "/p4c/creditBasedPackedCycle.p4",
+                "line" : 222,
+                "column" : 12,
+                "source_fragment" : "TYPE_ARP : {mac_lpm.apply();}"
+              },
+              "match_key" : [
+                {
+                  "match_type" : "exact",
+                  "key" : "0x0806"
+                }
+              ],
+              "action_entry" : {
+                "action_id" : 9,
+                "action_data" : []
+              },
+              "priority" : 1
+            },
+            {
+              "source_info" : {
+                "filename" : "/p4c/creditBasedPackedCycle.p4",
+                "line" : 223,
+                "column" : 12,
+                "source_fragment" : "TYPE_IPV4 : {ipv4_lpm.apply();}"
+              },
+              "match_key" : [
+                {
+                  "match_type" : "exact",
+                  "key" : "0x0800"
+                }
+              ],
+              "action_entry" : {
+                "action_id" : 10,
+                "action_data" : []
+              },
+              "priority" : 2
+            },
+            {
+              "source_info" : {
+                "filename" : "/p4c/creditBasedPackedCycle.p4",
+                "line" : 224,
+                "column" : 12,
+                "source_fragment" : "TYPE_CUP : {handleCredit();}"
+              },
+              "match_key" : [
+                {
+                  "match_type" : "exact",
+                  "key" : "0x0101"
+                }
+              ],
+              "action_entry" : {
+                "action_id" : 11,
+                "action_data" : []
+              },
+              "priority" : 3
+            }
+          ]
         },
         {
-          "name" : "tbl_drop_2",
-          "id" : 9,
+          "name" : "MyIngress.mac_lpm",
+          "id" : 3,
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 262,
-            "column" : 20,
-            "source_fragment" : "drop()"
+            "line" : 182,
+            "column" : 10,
+            "source_fragment" : "mac_lpm"
           },
-          "key" : [],
-          "match_type" : "exact",
+          "key" : [
+            {
+              "match_type" : "lpm",
+              "name" : "hdr.arp.dstIpAddr",
+              "target" : ["arp", "dstIpAddr"],
+              "mask" : null
+            }
+          ],
+          "match_type" : "lpm",
           "type" : "simple",
           "max_size" : 1024,
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [7],
-          "actions" : ["MyIngress.drop"],
-          "base_default_next" : null,
+          "action_ids" : [6, 3, 1],
+          "actions" : ["MyIngress.mac_forward", "MyIngress.drop", "NoAction"],
+          "base_default_next" : "tbl_creditBasedPackedCycle229",
           "next_tables" : {
-            "MyIngress.drop" : null
+            "MyIngress.mac_forward" : "tbl_creditBasedPackedCycle229",
+            "MyIngress.drop" : "tbl_creditBasedPackedCycle229",
+            "NoAction" : "tbl_creditBasedPackedCycle229"
           },
           "default_entry" : {
-            "action_id" : 7,
-            "action_const" : true,
+            "action_id" : 3,
+            "action_const" : false,
             "action_data" : [],
-            "action_entry_const" : true
-          }
-        },
-        {
-          "name" : "tbl_drop_3",
-          "id" : 10,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 264,
-            "column" : 20,
-            "source_fragment" : "drop()"
-          },
-          "key" : [],
-          "match_type" : "exact",
-          "type" : "simple",
-          "max_size" : 1024,
-          "with_counters" : false,
-          "support_timeout" : false,
-          "direct_meters" : null,
-          "action_ids" : [8],
-          "actions" : ["MyIngress.drop"],
-          "base_default_next" : null,
-          "next_tables" : {
-            "MyIngress.drop" : null
-          },
-          "default_entry" : {
-            "action_id" : 8,
-            "action_const" : true,
-            "action_data" : [],
-            "action_entry_const" : true
+            "action_entry_const" : false
           }
         },
         {
           "name" : "MyIngress.ipv4_lpm",
-          "id" : 11,
+          "id" : 4,
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 181,
+            "line" : 164,
             "column" : 10,
             "source_fragment" : "ipv4_lpm"
           },
@@ -1490,13 +1053,13 @@
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [9, 2, 0],
+          "action_ids" : [5, 2, 0],
           "actions" : ["MyIngress.ipv4_forward", "MyIngress.drop", "NoAction"],
-          "base_default_next" : "node_23",
+          "base_default_next" : "tbl_creditBasedPackedCycle229",
           "next_tables" : {
-            "MyIngress.ipv4_forward" : "node_23",
-            "MyIngress.drop" : "node_23",
-            "NoAction" : "node_23"
+            "MyIngress.ipv4_forward" : "tbl_creditBasedPackedCycle229",
+            "MyIngress.drop" : "tbl_creditBasedPackedCycle229",
+            "NoAction" : "tbl_creditBasedPackedCycle229"
           },
           "default_entry" : {
             "action_id" : 2,
@@ -1506,346 +1069,138 @@
           }
         },
         {
-          "name" : "MyIngress.mac_exact",
-          "id" : 12,
+          "name" : "tbl_handleCredit",
+          "id" : 5,
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 198,
-            "column" : 10,
-            "source_fragment" : "mac_exact"
+            "line" : 224,
+            "column" : 24,
+            "source_fragment" : "handleCredit()"
           },
-          "key" : [
-            {
-              "match_type" : "lpm",
-              "name" : "hdr.arp.dstIpAddr",
-              "target" : ["arp", "dstIpAddr"],
-              "mask" : null
-            }
-          ],
-          "match_type" : "lpm",
+          "key" : [],
+          "match_type" : "exact",
           "type" : "simple",
           "max_size" : 1024,
           "with_counters" : false,
           "support_timeout" : false,
           "direct_meters" : null,
-          "action_ids" : [10, 3, 1],
-          "actions" : ["MyIngress.mac_forward", "MyIngress.drop", "NoAction"],
-          "base_default_next" : null,
+          "action_ids" : [8],
+          "actions" : ["MyIngress.handleCredit"],
+          "base_default_next" : "tbl_creditBasedPackedCycle229",
           "next_tables" : {
-            "MyIngress.mac_forward" : null,
-            "MyIngress.drop" : null,
-            "NoAction" : null
+            "MyIngress.handleCredit" : "tbl_creditBasedPackedCycle229"
           },
           "default_entry" : {
-            "action_id" : 3,
-            "action_const" : false,
+            "action_id" : 8,
+            "action_const" : true,
             "action_data" : [],
-            "action_entry_const" : false
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "tbl_creditBasedPackedCycle229",
+          "id" : 6,
+          "source_info" : {
+            "filename" : "/p4c/creditBasedPackedCycle.p4",
+            "line" : 229,
+            "column" : 8,
+            "source_fragment" : "ingressCreditCard.read(balence, sending2Port)"
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [15],
+          "actions" : ["creditBasedPackedCycle229"],
+          "base_default_next" : "node_9",
+          "next_tables" : {
+            "creditBasedPackedCycle229" : "node_9"
+          },
+          "default_entry" : {
+            "action_id" : 15,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "tbl_reduce_credit",
+          "id" : 7,
+          "source_info" : {
+            "filename" : "/p4c/creditBasedPackedCycle.p4",
+            "line" : 235,
+            "column" : 16,
+            "source_fragment" : "reduce_credit(sending2Port)"
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [7],
+          "actions" : ["MyIngress.reduce_credit"],
+          "base_default_next" : null,
+          "next_tables" : {
+            "MyIngress.reduce_credit" : null
+          },
+          "default_entry" : {
+            "action_id" : 7,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "tbl_drop",
+          "id" : 8,
+          "source_info" : {
+            "filename" : "/p4c/creditBasedPackedCycle.p4",
+            "line" : 232,
+            "column" : 12,
+            "source_fragment" : "drop()"
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [4],
+          "actions" : ["MyIngress.drop"],
+          "base_default_next" : null,
+          "next_tables" : {
+            "MyIngress.drop" : null
+          },
+          "default_entry" : {
+            "action_id" : 4,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
           }
         }
       ],
       "action_profiles" : [],
       "conditionals" : [
         {
-          "name" : "node_2",
+          "name" : "node_9",
           "id" : 0,
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 232,
-            "column" : 12,
-            "source_fragment" : "!hdr.ipv4.isValid() && !hdr.cup.isValid()"
+            "line" : 231,
+            "column" : 14,
+            "source_fragment" : "balence > 0 && !hdr.cup.isValid()"
           },
           "expression" : {
             "type" : "expression",
             "value" : {
               "op" : "and",
               "left" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "not",
-                  "left" : null,
-                  "right" : {
-                    "type" : "expression",
-                    "value" : {
-                      "op" : "d2b",
-                      "left" : null,
-                      "right" : {
-                        "type" : "field",
-                        "value" : ["ipv4", "$valid$"]
-                      }
-                    }
-                  }
-                }
-              },
-              "right" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "not",
-                  "left" : null,
-                  "right" : {
-                    "type" : "expression",
-                    "value" : {
-                      "op" : "d2b",
-                      "left" : null,
-                      "right" : {
-                        "type" : "field",
-                        "value" : ["cup", "$valid$"]
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "true_next" : "tbl_drop",
-          "false_next" : "tbl_creditBasedPackedCycle237"
-        },
-        {
-          "name" : "node_5",
-          "id" : 1,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 239,
-            "column" : 11,
-            "source_fragment" : "standard_metadata.ingress_global_timestamp <= timeBan"
-          },
-          "expression" : {
-            "type" : "expression",
-            "value" : {
-              "op" : "<=",
-              "left" : {
-                "type" : "field",
-                "value" : ["standard_metadata", "ingress_global_timestamp"]
-              },
-              "right" : {
-                "type" : "field",
-                "value" : ["scalars", "timeBan_0"]
-              }
-            }
-          },
-          "true_next" : "tbl_creditBasedPackedCycle240",
-          "false_next" : "tbl_creditBasedPackedCycle242"
-        },
-        {
-          "name" : "node_8",
-          "id" : 2,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 246,
-            "column" : 12,
-            "source_fragment" : "!hdr.ipv4.isValid() && !hdr.cup.isValid()"
-          },
-          "expression" : {
-            "type" : "expression",
-            "value" : {
-              "op" : "and",
-              "left" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "not",
-                  "left" : null,
-                  "right" : {
-                    "type" : "expression",
-                    "value" : {
-                      "op" : "d2b",
-                      "left" : null,
-                      "right" : {
-                        "type" : "field",
-                        "value" : ["ipv4", "$valid$"]
-                      }
-                    }
-                  }
-                }
-              },
-              "right" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "not",
-                  "left" : null,
-                  "right" : {
-                    "type" : "expression",
-                    "value" : {
-                      "op" : "d2b",
-                      "left" : null,
-                      "right" : {
-                        "type" : "field",
-                        "value" : ["cup", "$valid$"]
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "true_next" : "tbl_drop_0",
-          "false_next" : "tbl_creditBasedPackedCycle251"
-        },
-        {
-          "name" : "node_11",
-          "id" : 3,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 255,
-            "column" : 12,
-            "source_fragment" : "hdr.ipv4.isValid() && hdr.cup.isValid()"
-          },
-          "expression" : {
-            "type" : "expression",
-            "value" : {
-              "op" : "and",
-              "left" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "d2b",
-                  "left" : null,
-                  "right" : {
-                    "type" : "field",
-                    "value" : ["ipv4", "$valid$"]
-                  }
-                }
-              },
-              "right" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "d2b",
-                  "left" : null,
-                  "right" : {
-                    "type" : "field",
-                    "value" : ["cup", "$valid$"]
-                  }
-                }
-              }
-            }
-          },
-          "true_next" : "node_12",
-          "false_next" : "node_20"
-        },
-        {
-          "name" : "node_12",
-          "id" : 4,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 256,
-            "column" : 16,
-            "source_fragment" : "hdr.cup.dstSwitchId == id"
-          },
-          "expression" : {
-            "type" : "expression",
-            "value" : {
-              "op" : "==",
-              "left" : {
-                "type" : "field",
-                "value" : ["cup", "dstSwitchId"]
-              },
-              "right" : {
-                "type" : "field",
-                "value" : ["scalars", "id_0"]
-              }
-            }
-          },
-          "true_next" : "node_13",
-          "false_next" : "tbl_drop_3"
-        },
-        {
-          "name" : "node_13",
-          "id" : 5,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 257,
-            "column" : 20,
-            "source_fragment" : "hdr.cup.opCode == 0x1"
-          },
-          "expression" : {
-            "type" : "expression",
-            "value" : {
-              "op" : "==",
-              "left" : {
-                "type" : "field",
-                "value" : ["cup", "opCode"]
-              },
-              "right" : {
-                "type" : "hexstr",
-                "value" : "0x00000001"
-              }
-            }
-          },
-          "true_next" : "tbl_add_credit",
-          "false_next" : "node_16"
-        },
-        {
-          "name" : "node_16",
-          "id" : 6,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 260,
-            "column" : 27,
-            "source_fragment" : "hdr.cup.opCode == 0x2 && hasTimeBan == 0"
-          },
-          "expression" : {
-            "type" : "expression",
-            "value" : {
-              "op" : "and",
-              "left" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "==",
-                  "left" : {
-                    "type" : "field",
-                    "value" : ["cup", "opCode"]
-                  },
-                  "right" : {
-                    "type" : "hexstr",
-                    "value" : "0x00000002"
-                  }
-                }
-              },
-              "right" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "==",
-                  "left" : {
-                    "type" : "field",
-                    "value" : ["scalars", "hasTimeBan_0"]
-                  },
-                  "right" : {
-                    "type" : "hexstr",
-                    "value" : "0x00"
-                  }
-                }
-              }
-            }
-          },
-          "false_next" : null,
-          "true_next" : "tbl_setTimeBan"
-        },
-        {
-          "name" : "node_20",
-          "id" : 7,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 267,
-            "column" : 16,
-            "source_fragment" : "hasTimeBan != 1 && balence > 0"
-          },
-          "expression" : {
-            "type" : "expression",
-            "value" : {
-              "op" : "and",
-              "left" : {
-                "type" : "expression",
-                "value" : {
-                  "op" : "!=",
-                  "left" : {
-                    "type" : "field",
-                    "value" : ["scalars", "hasTimeBan_0"]
-                  },
-                  "right" : {
-                    "type" : "hexstr",
-                    "value" : "0x01"
-                  }
-                }
-              },
-              "right" : {
                 "type" : "expression",
                 "value" : {
                   "op" : ">",
@@ -1858,20 +1213,38 @@
                     "value" : "0x00000000"
                   }
                 }
+              },
+              "right" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "not",
+                  "left" : null,
+                  "right" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "d2b",
+                      "left" : null,
+                      "right" : {
+                        "type" : "field",
+                        "value" : ["cup", "$valid$"]
+                      }
+                    }
+                  }
+                }
               }
             }
           },
-          "false_next" : null,
-          "true_next" : "node_21"
+          "true_next" : "node_10",
+          "false_next" : "tbl_drop"
         },
         {
-          "name" : "node_21",
-          "id" : 8,
+          "name" : "node_10",
+          "id" : 1,
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 268,
-            "column" : 20,
-            "source_fragment" : "hdr.ipv4.isValid()"
+            "line" : 234,
+            "column" : 17,
+            "source_fragment" : "hdr.cup.isValid()"
           },
           "expression" : {
             "type" : "expression",
@@ -1880,35 +1253,12 @@
               "left" : null,
               "right" : {
                 "type" : "field",
-                "value" : ["ipv4", "$valid$"]
+                "value" : ["cup", "$valid$"]
               }
             }
           },
-          "true_next" : "MyIngress.ipv4_lpm",
-          "false_next" : "node_23"
-        },
-        {
-          "name" : "node_23",
-          "id" : 9,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 271,
-            "column" : 20,
-            "source_fragment" : "hdr.arp.isValid()"
-          },
-          "expression" : {
-            "type" : "expression",
-            "value" : {
-              "op" : "d2b",
-              "left" : null,
-              "right" : {
-                "type" : "field",
-                "value" : ["arp", "$valid$"]
-              }
-            }
-          },
-          "false_next" : null,
-          "true_next" : "MyIngress.mac_exact"
+          "true_next" : null,
+          "false_next" : "tbl_reduce_credit"
         }
       ]
     },
@@ -1917,71 +1267,14 @@
       "id" : 1,
       "source_info" : {
         "filename" : "/p4c/creditBasedPackedCycle.p4",
-        "line" : 284,
+        "line" : 247,
         "column" : 8,
         "source_fragment" : "MyEgress"
       },
-      "init_table" : "node_27",
-      "tables" : [
-        {
-          "name" : "tbl_reduce_credit",
-          "id" : 13,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 298,
-            "column" : 12,
-            "source_fragment" : "reduce_credit()"
-          },
-          "key" : [],
-          "match_type" : "exact",
-          "type" : "simple",
-          "max_size" : 1024,
-          "with_counters" : false,
-          "support_timeout" : false,
-          "direct_meters" : null,
-          "action_ids" : [17],
-          "actions" : ["MyEgress.reduce_credit"],
-          "base_default_next" : null,
-          "next_tables" : {
-            "MyEgress.reduce_credit" : null
-          },
-          "default_entry" : {
-            "action_id" : 17,
-            "action_const" : true,
-            "action_data" : [],
-            "action_entry_const" : true
-          }
-        }
-      ],
+      "init_table" : null,
+      "tables" : [],
       "action_profiles" : [],
-      "conditionals" : [
-        {
-          "name" : "node_27",
-          "id" : 10,
-          "source_info" : {
-            "filename" : "/p4c/creditBasedPackedCycle.p4",
-            "line" : 297,
-            "column" : 11,
-            "source_fragment" : "standard_metadata.egress_port == 1"
-          },
-          "expression" : {
-            "type" : "expression",
-            "value" : {
-              "op" : "==",
-              "left" : {
-                "type" : "field",
-                "value" : ["standard_metadata", "egress_port"]
-              },
-              "right" : {
-                "type" : "hexstr",
-                "value" : "0x0001"
-              }
-            }
-          },
-          "false_next" : null,
-          "true_next" : "tbl_reduce_credit"
-        }
-      ]
+      "conditionals" : []
     }
   ],
   "checksums" : [],

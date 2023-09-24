@@ -18,3 +18,17 @@ EOF
 simple_switch_CLI << EOF
 table_add MyIngress.ipv4_lpm MyIngress.ipv4_forward 10.10.0.0/16 => 0
 EOF
+
+
+simple_switch_CLI << EOF
+mirroring_add 1 0
+EOF
+
+
+simple_switch_CLI << EOF
+register_write ingressCreditCard 1 1
+EOF
+
+simple_switch_CLI << EOF
+register_write leftOverCreditCard 0 1
+EOF

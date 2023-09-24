@@ -1,0 +1,22 @@
+digraph MyParser {
+subgraph clusterMyParser {
+graph [
+fontsize="22pt", label=MyParser, style=bold];
+0[label="start
+(hdr.ethernet.etherType)", margin="", shape=rectangle, style=solid];
+1[label=drop, margin="", shape=rectangle, style=solid];
+2[label=parse_arp, margin="", shape=rectangle, style=solid];
+3[label=parse_ipv4, margin="", shape=rectangle, style=solid];
+4[label=parse_cup, margin="", shape=rectangle, style=solid];
+5[label=accept, margin="", shape=rectangle, style=solid];
+6[label=reject, margin="", shape=rectangle, style=solid];
+0 -> 2[label="16w0x806"];
+0 -> 3[label="16w0x800"];
+0 -> 4[label="16w0x100"];
+0 -> 1[label=default];
+1 -> 5[label=always];
+2 -> 5[label=always];
+3 -> 5[label=always];
+4 -> 5[label=always];
+}
+}

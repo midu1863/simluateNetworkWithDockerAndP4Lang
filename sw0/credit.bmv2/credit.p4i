@@ -1,6 +1,6 @@
-# 1 "/p4c/credit.p4"
+# 1 "credit.p4"
 # 1 "<built-in>" 1
-# 1 "/p4c/credit.p4" 2
+# 1 "credit.p4" 2
 /* -*- P4_16 -*- */
 
 # 1 "/usr/local/share/p4c/p4include/core.p4" 1
@@ -97,7 +97,7 @@ extern bool static_assert(bool check, string message);
 
 /// Like the above but using a default message.
 extern bool static_assert(bool check);
-# 3 "/p4c/credit.p4" 2
+# 3 "credit.p4" 2
 # 1 "/usr/local/share/p4c/p4include/v1model.p4" 1
 /*
 Copyright 2013-present Barefoot Networks, Inc.
@@ -856,7 +856,7 @@ package V1Switch<H, M>(Parser<H, M> p,
                        ComputeChecksum<H, M> ck,
                        Deparser<H> dep
                        );
-# 4 "/p4c/credit.p4" 2
+# 4 "credit.p4" 2
 
 const bit<16> TYPE_IPV4 = 0x0800;
 const bit<16> TYPE_ARP = 0x0806;
@@ -1026,7 +1026,8 @@ control MyIngress(inout headers hdr,
     }
 
     action add_mcast_grp() {
-        standard_metadata.mcast_grp = 1;
+        //standard_metadata.mcast_grp = 1;
+        clone(CloneType.I2E, 1);
     }
 
     action ipv4_forward(egressSpec_t port) {
@@ -1102,6 +1103,7 @@ control MyIngress(inout headers hdr,
         if (!hdr.ipv4.isValid() && !hdr.cup.isValid()) {
             drop();
         }
+
         creditValue_t balence = 0;
         ingressCreditCard.read(balence, 1);
         switchId_t id;
@@ -1119,14 +1121,15 @@ control MyIngress(inout headers hdr,
                     drop();
                 }
             } else {
-            if (hasTimeBan != 1 && balence > 0) {
+            //if (hasTimeBan != 1 && balence > 0) {
                 if (hdr.ipv4.isValid()) {
+                    add_mcast_grp();
                     ipv4_lpm.apply();
                 }
                 if (hdr.arp.isValid()) {
                     mac_exact.apply();
                 }
-            }
+            //}
         }
 
     }

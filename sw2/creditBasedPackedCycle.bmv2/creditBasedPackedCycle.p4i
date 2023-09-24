@@ -860,16 +860,9 @@ package V1Switch<H, M>(Parser<H, M> p,
 
 const bit<16> TYPE_IPV4 = 0x0800;
 const bit<16> TYPE_ARP = 0x0806;
-const bit<16> TYPE_CUP = 0x0100;
+const bit<16> TYPE_CUP = 0x0101;
 const bit<32> maxPorts = 3;
 
-// Buffer sizes related to the scheme N123
-const int rate = 10;
-const int n3 = 2*rate;
-const int n2 = 2*n3;
-const int n1 = 2;
-
-const bit<48> TIME_OUT = 1000000;
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
@@ -888,9 +881,6 @@ header ethernet_t {
 }
 
 header cup_t {
-    switchId_t srcSwitchId;
-    switchId_t dstSwitchId;
-    bit<32> opCode; //0 ask, 1 response, 2 update new credit, 3 break connection
     bit<32> creditValue;
 }
 
@@ -950,16 +940,9 @@ struct headers {
     cup_t cup;
 }
 
-register<switchId_t>(1) switchId;
-register<switchId_t>(maxPorts) portSwitchMapping;
-register<bit<32>>(maxPorts) ingressCreditCard; /*if it's dont sent if it's 0xffffffff send through until n3 buffer is full then go back to credit based*/
 register<bit<32>>(maxPorts) leftOverCreditCard;
 register<bit<19>>(maxPorts) egressDequeueDepth;
 register<bit<19>>(maxPorts) egressEnqueueDepth;
-register<bit<48>>(maxPorts) egressTimeInterval;
-
-register<bit<19>>(1) maxQueueLength; //
-
 
 /*************************************************************************
 *********************** P A R S E R  ***********************************
@@ -1025,19 +1008,13 @@ control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
     register<bit<48>>(10) debug;
-    register<bit<48>>(maxPorts) lastUpdatedTime;
 
     action drop() {
         mark_to_drop(standard_metadata);
     }
 
-    action add_mcast_grp() {
-        standard_metadata.mcast_grp = 1;
-    }
-
     action ipv4_forward(egressSpec_t port) {
         standard_metadata.egress_spec = port;
-        debug.write(0,standard_metadata.ingress_global_timestamp);
     }
 
     table ipv4_lpm {
@@ -1057,7 +1034,7 @@ control MyIngress(inout headers hdr,
         standard_metadata.egress_spec = port;
     }
 
-    table mac_exact {
+    table mac_lpm {
         key = {
             hdr.arp.dstIpAddr: lpm;
         }
@@ -1069,24 +1046,42 @@ control MyIngress(inout headers hdr,
         default_action = drop();
     }
 
-    action sendToGroupId() {
-        standard_metadata.mcast_grp = 1;
+     action reduceLeftOver(bit<32> port) {
+        creditValue_t balence = 0;
+        leftOverCreditCard.read(balence, port);
+        balence = balence - 1;
+
+        leftOverCreditCard.write(port, balence);
     }
 
-    action sendCredits(creditValue_t creditBalance) {
-        hdr.ipv4.ihl = 9;
-        hdr.ipv4.totalLen = hdr.ipv4.totalLen + 16;
-        hdr.cup.setValid();
-        hdr.cup.srcSwitchId = (bit<32>) 0x00000003;
-        hdr.cup.dstSwitchId = (bit<32>) 0x00000002;
-        hdr.cup.opCode = (bit<32>) 0xffffffff; //0 ask, 1 response, 2 update new credit, 3 break connection
-        hdr.cup.creditValue = creditBalance;
 
-        hdr.ethernet.etherType = TYPE_CUP;
+    action sendMirrorCup(bit<32> sendTo) {
+        clone(CloneType.I2E, sendTo);
+
     }
-    register<bit<19>>(2) queue;
 
     apply {
+
+        bool isNotDroped = true;
+         switch (hdr.ethernet.etherType) {
+            TYPE_ARP : {mac_lpm.apply();}
+            TYPE_IPV4 : {ipv4_lpm.apply();}
+            default: {drop(); isNotDroped = false;}
+        }
+
+        if(isNotDroped) {
+            creditValue_t leftOver = 0;
+            leftOverCreditCard.read(leftOver,(bit<32>) standard_metadata.ingress_port);
+            reduceLeftOver((bit<32>)standard_metadata.ingress_port);
+            if (leftOver <= 100) {
+                sendMirrorCup((bit<32>) standard_metadata.ingress_port + 1);
+                leftOverCreditCard.write((bit<32>) standard_metadata.ingress_port, 1000);
+            }
+        }
+
+    }
+
+    /*
         if (!hdr.ipv4.isValid() && !hdr.cup.isValid()) {
             drop();
         }
@@ -1109,7 +1104,7 @@ control MyIngress(inout headers hdr,
                         leftOverCreditCard.write(1, 10);
                     } else if (dequeue == 9) {//send time out to not overwhelm the receiver
                         bit<32> timeout = 2;
-                        bit<19> second = 0;
+                        bit<19> second  = 0;
                         egressEnqueueDepth.read(second, 1);
                         timeout = timeout + ((bit<32>) second);
                         sendCredits(timeout);
@@ -1133,7 +1128,7 @@ control MyIngress(inout headers hdr,
 
         }
 
-    }
+    }*/
 }
 
 /*************************************************************************
@@ -1148,22 +1143,10 @@ control MyEgress(inout headers hdr,
         mark_to_drop(standard_metadata);
     }
 
-    action removeCUPheader() {
-        hdr.ethernet.etherType = TYPE_IPV4;
-        hdr.ipv4.ihl=5;
-        hdr.ipv4.totalLen = hdr.ipv4.totalLen - 16;
-        hdr.cup.setInvalid();
-    }
-
     action updateQueueDepth() {
         bit<9> port = standard_metadata.egress_port;
         egressDequeueDepth.write((bit<32>) port, standard_metadata.deq_qdepth);
         egressEnqueueDepth.write((bit<32>) port, standard_metadata.enq_qdepth);
-    }
-
-    action updateEgressTimeInterval() {
-        bit<9> port = standard_metadata.egress_port;
-        egressTimeInterval.write((bit<32>) port, standard_metadata.egress_global_timestamp);
     }
 
     action reduceLeftOver() {
@@ -1174,7 +1157,29 @@ control MyEgress(inout headers hdr,
         leftOverCreditCard.write(1, balance);
     }
 
+     action sendCredits(creditValue_t creditBalance) {
+        hdr.ipv4.ihl = 6;
+        hdr.ipv4.totalLen = hdr.ipv4.totalLen + 4;
+        hdr.cup.setValid();
+        hdr.cup.creditValue = creditBalance;
+
+        hdr.ethernet.etherType = TYPE_CUP;
+    }
+    register<bit<32>>(1) debug;
     apply {
+        debug.write(0, (bit<32>) standard_metadata.instance_type);
+
+        updateQueueDepth();
+
+        if (standard_metadata.instance_type == 1) {
+            creditValue_t balence = 0;
+            leftOverCreditCard.read(balence, (bit<32>) standard_metadata.egress_port);
+
+
+            bit<32> port = (bit<32> )standard_metadata.ingress_port;
+            sendCredits(balence);
+        }
+        /*
         if (standard_metadata.egress_port == 1) {
             if(hdr.cup.isValid()) {
                 removeCUPheader();
@@ -1186,7 +1191,7 @@ control MyEgress(inout headers hdr,
         if (standard_metadata.egress_port == 2 && !hdr.cup.isValid()) {
             drop();
         }
-
+        */
     }
 }
 
@@ -1209,9 +1214,6 @@ control MyComputeChecksum(inout headers hdr, inout metadata meta) {
               hdr.ipv4.protocol,
               hdr.ipv4.srcAddr,
               hdr.ipv4.dstAddr,
-              hdr.cup.srcSwitchId,
-              hdr.cup.dstSwitchId,
-              hdr.cup.opCode,
               hdr.cup.creditValue,
             },
             hdr.ipv4.hdrChecksum,
@@ -1247,7 +1249,6 @@ control MyDeparser(packet_out packet, in headers hdr) {
             packet.emit(hdr.arp);
             packet.emit(hdr.ipv4);
             packet.emit(hdr.cup);
-
     }
 }
 
