@@ -1,0 +1,529 @@
+[10:27:36.151] [bmv2] [D] [thread 69] Set default default entry for table 'tbl_creditBasedPackedCycle157': creditBasedPackedCycle157 - 
+[10:27:36.151] [bmv2] [D] [thread 69] Set default default entry for table 'tbl_creditBasedPackedCycle255': creditBasedPackedCycle255 - 
+[10:27:36.151] [bmv2] [D] [thread 69] Set default default entry for table 'switch_0_table': switch_0_case_2 - 
+[10:27:36.151] [bmv2] [D] [thread 69] Entry 0 added to table 'switch_0_table'
+[10:27:36.151] [bmv2] [D] [thread 69] Dumping entry 0
+Match key:
+* scalars.switch_0_key: EXACT     0806
+Action entry: switch_0_case - 
+
+[10:27:36.151] [bmv2] [D] [thread 69] Entry 1 added to table 'switch_0_table'
+[10:27:36.151] [bmv2] [D] [thread 69] Dumping entry 1
+Match key:
+* scalars.switch_0_key: EXACT     0800
+Action entry: switch_0_case_0 - 
+
+[10:27:36.151] [bmv2] [D] [thread 69] Entry 2 added to table 'switch_0_table'
+[10:27:36.151] [bmv2] [D] [thread 69] Dumping entry 2
+Match key:
+* scalars.switch_0_key: EXACT     0101
+Action entry: switch_0_case_1 - 
+
+[10:27:36.151] [bmv2] [D] [thread 69] Set default default entry for table 'MyIngress.mac_lpm': MyIngress.drop - 
+[10:27:36.151] [bmv2] [D] [thread 69] Set default default entry for table 'MyIngress.ipv4_lpm': MyIngress.drop - 
+[10:27:36.151] [bmv2] [D] [thread 69] Set default default entry for table 'MyIngress.cup_lpm': MyIngress.drop - 
+[10:27:36.151] [bmv2] [D] [thread 69] Set default default entry for table 'tbl_handleCredit': MyIngress.handleCredit - 
+[10:27:36.151] [bmv2] [D] [thread 69] Set default default entry for table 'tbl_drop': MyIngress.drop - 
+[10:27:36.151] [bmv2] [D] [thread 69] Set default default entry for table 'tbl_creditBasedPackedCycle259': creditBasedPackedCycle259 - 
+[10:27:36.151] [bmv2] [D] [thread 69] Set default default entry for table 'tbl_creditBasedPackedCycle263': creditBasedPackedCycle263 - 
+[10:27:36.151] [bmv2] [D] [thread 69] Set default default entry for table 'tbl_reduce_credit': MyIngress.reduce_credit - 
+[10:27:36.151] [bmv2] [D] [thread 69] Set default default entry for table 'tbl_reduceLeftOver': MyIngress.reduceLeftOver - 
+[10:27:36.151] [bmv2] [D] [thread 69] Set default default entry for table 'tbl_creditBasedPackedCycle269': creditBasedPackedCycle269 - 
+[10:27:36.151] [bmv2] [D] [thread 69] Set default default entry for table 'tbl_drop_0': MyIngress.drop - 
+[10:27:36.152] [bmv2] [D] [thread 69] Set default default entry for table 'tbl_updateQueueDepth': MyEgress.updateQueueDepth - 
+[10:27:36.152] [bmv2] [D] [thread 69] Set default default entry for table 'tbl_creditBasedPackedCycle338': creditBasedPackedCycle338 - 
+[10:27:36.152] [bmv2] [D] [thread 69] Set default default entry for table 'tbl_creditBasedPackedCycle344': creditBasedPackedCycle344 - 
+[10:27:36.152] [bmv2] [D] [thread 69] Set default default entry for table 'tbl_sendCredits': MyEgress.sendCredits - 
+[10:27:36.152] [bmv2] [D] [thread 69] Set default default entry for table 'tbl_creditBasedPackedCycle349': creditBasedPackedCycle349 - 
+[10:27:36.152] [bmv2] [D] [thread 69] Adding interface eth1 as port 0
+[10:27:36.204] [bmv2] [D] [thread 69] Adding interface eth2 as port 1
+[10:27:36.248] [bmv2] [D] [thread 69] Adding interface eth3 as port 2
+[10:27:36.296] [bmv2] [I] [thread 69] Starting Thrift server on port 9090
+[10:27:36.297] [bmv2] [I] [thread 69] Thrift server was started
+[10:27:50.437] [bmv2] [T] [thread 92] bm_get_config
+[10:27:50.507] [bmv2] [T] [thread 94] bm_get_config
+[10:27:50.577] [bmv2] [T] [thread 96] bm_get_config
+[10:27:50.579] [bmv2] [T] [thread 96] bm_table_add_entry
+[10:27:50.579] [bmv2] [D] [thread 96] Entry 0 added to table 'MyIngress.ipv4_lpm'
+[10:27:50.580] [bmv2] [D] [thread 96] Dumping entry 0
+Match key:
+* hdr.ipv4.dstAddr    : LPM       0d0d0000/16
+Action entry: MyIngress.ipv4_forward - 1,
+
+[10:27:50.646] [bmv2] [T] [thread 98] bm_get_config
+[10:27:50.649] [bmv2] [T] [thread 98] bm_table_add_entry
+[10:27:50.649] [bmv2] [D] [thread 98] Entry 1 added to table 'MyIngress.ipv4_lpm'
+[10:27:50.649] [bmv2] [D] [thread 98] Dumping entry 1
+Match key:
+* hdr.ipv4.dstAddr    : LPM       0a0a0000/16
+Action entry: MyIngress.ipv4_forward - 0,
+
+[10:27:50.717] [bmv2] [T] [thread 100] bm_get_config
+[10:27:50.719] [bmv2] [T] [thread 100] bm_table_add_entry
+[10:27:50.719] [bmv2] [D] [thread 100] Entry 0 added to table 'MyIngress.cup_lpm'
+[10:27:50.719] [bmv2] [D] [thread 100] Dumping entry 0
+Match key:
+* hdr.ipv4.srcAddr    : LPM       0a0a0000/16
+Action entry: MyIngress.cup_forward - 0,
+
+[10:27:50.786] [bmv2] [T] [thread 102] bm_get_config
+[10:27:50.788] [bmv2] [T] [thread 102] mirroring_sesssion_add
+[10:27:50.855] [bmv2] [T] [thread 104] bm_get_config
+[10:27:50.857] [bmv2] [T] [thread 104] bm_register_write
+[10:27:50.924] [bmv2] [T] [thread 106] bm_get_config
+[10:27:50.926] [bmv2] [T] [thread 106] bm_register_write
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Processing packet received on port 0
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Parser 'parser': start
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Extracting header 'ethernet'
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Parser state 'start': key is 0800
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Bytes parsed: 14
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Extracting header 'ipv4'
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Parser state 'parse_ipv4' has no switch, going to default next state
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Bytes parsed: 34
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Parser 'parser': end
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Pipeline 'ingress': start
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Applying table 'tbl_creditBasedPackedCycle157'
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Looking up key:
+
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Table 'tbl_creditBasedPackedCycle157': miss
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Action entry is creditBasedPackedCycle157 - 
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Action creditBasedPackedCycle157
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(157) Primitive bit<32> sending2Port = 0xFFFFFFFF;
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(254) Primitive bool isNotDroped = true;
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Applying table 'tbl_creditBasedPackedCycle255'
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Looking up key:
+
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Table 'tbl_creditBasedPackedCycle255': miss
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Action entry is creditBasedPackedCycle255 - 
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Action creditBasedPackedCycle255
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(255) Primitive switch (hdr.ethernet.etherType
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Applying table 'switch_0_table'
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Looking up key:
+* scalars.switch_0_key: 0800
+
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Table 'switch_0_table': hit with handle 1
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Dumping entry 1
+Match key:
+* scalars.switch_0_key: EXACT     0800
+Action entry: switch_0_case_0 - 
+
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Action entry is switch_0_case_0 - 
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Action switch_0_case_0
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr    : 0d0d0003
+
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 0
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Dumping entry 0
+Match key:
+* hdr.ipv4.dstAddr    : LPM       0d0d0000/16
+Action entry: MyIngress.ipv4_forward - 1,
+
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Action entry is MyIngress.ipv4_forward - 1,
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Action MyIngress.ipv4_forward
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(164) Primitive standard_metadata.egress_spec = port
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(165) Primitive sending2Port = (bit<32>) port
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(262) Condition "isNotDroped" (node_11) is true
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Applying table 'tbl_creditBasedPackedCycle263'
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Looking up key:
+
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Table 'tbl_creditBasedPackedCycle263': miss
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Action entry is creditBasedPackedCycle263 - 
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Action creditBasedPackedCycle263
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(263) Primitive debug.write(0, standard_metadata.instance_type)
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Wrote register 'MyIngress.debug' at index 0 with value 0
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(265) Primitive ingressCreditCard.read(balence, sending2Port)
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Read register 'ingressCreditCard' at index 1 read value 1
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(266) Condition "balence > 0 && !hdr.cup.isValid()" (node_13) is true
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(274) Condition "hdr.cup.isValid()" (node_14) is false
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Applying table 'tbl_reduce_credit'
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Looking up key:
+
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Table 'tbl_reduce_credit': miss
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Action entry is MyIngress.reduce_credit - 
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Action MyIngress.reduce_credit
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(237) Primitive ingressCreditCard.read(balence, port)
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Read register 'ingressCreditCard' at index 1 read value 1
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(239) Primitive balence = balence - 1
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(240) Primitive ingressCreditCard.write(port, balence)
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Wrote register 'ingressCreditCard' at index 1 with value 0
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Applying table 'tbl_reduceLeftOver'
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Looking up key:
+
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Table 'tbl_reduceLeftOver': miss
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Action entry is MyIngress.reduceLeftOver - 
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Action MyIngress.reduceLeftOver
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(219) Primitive port
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(219) Primitive leftOverCreditCard.read(balence, port)
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Read register 'leftOverCreditCard' at index 0 read value 1
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(220) Primitive balence = balence - 1
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(222) Primitive port
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(222) Primitive leftOverCreditCard.write(port, balence)
+[10:28:08.536] [bmv2] [T] [thread 75] [0.0] [cxt 0] Wrote register 'leftOverCreditCard' at index 0 with value 0
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Pipeline 'ingress': end
+[10:28:08.536] [bmv2] [D] [thread 75] [0.0] [cxt 0] Egress port is 1
+[10:28:08.536] [bmv2] [D] [thread 77] [0.0] [cxt 0] Pipeline 'egress': start
+[10:28:08.536] [bmv2] [T] [thread 77] [0.0] [cxt 0] Applying table 'tbl_updateQueueDepth'
+[10:28:08.536] [bmv2] [D] [thread 77] [0.0] [cxt 0] Looking up key:
+
+[10:28:08.536] [bmv2] [D] [thread 77] [0.0] [cxt 0] Table 'tbl_updateQueueDepth': miss
+[10:28:08.536] [bmv2] [D] [thread 77] [0.0] [cxt 0] Action entry is MyEgress.updateQueueDepth - 
+[10:28:08.536] [bmv2] [T] [thread 77] [0.0] [cxt 0] Action MyEgress.updateQueueDepth
+[10:28:08.536] [bmv2] [T] [thread 77] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(323) Primitive (bit<32>) port
+[10:28:08.536] [bmv2] [T] [thread 77] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(323) Primitive egressDequeueDepth.write((bit<32>) port, standard_metadata.deq_qdepth)
+[10:28:08.536] [bmv2] [T] [thread 77] [0.0] [cxt 0] Wrote register 'egressDequeueDepth' at index 1 with value 0
+[10:28:08.536] [bmv2] [T] [thread 77] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(324) Primitive (bit<32>) port
+[10:28:08.536] [bmv2] [T] [thread 77] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(324) Primitive egressEnqueueDepth.write((bit<32>) port, standard_metadata.enq_qdepth)
+[10:28:08.536] [bmv2] [T] [thread 77] [0.0] [cxt 0] Wrote register 'egressEnqueueDepth' at index 1 with value 0
+[10:28:08.536] [bmv2] [T] [thread 77] [0.0] [cxt 0] Applying table 'tbl_creditBasedPackedCycle338'
+[10:28:08.536] [bmv2] [D] [thread 77] [0.0] [cxt 0] Looking up key:
+
+[10:28:08.536] [bmv2] [D] [thread 77] [0.0] [cxt 0] Table 'tbl_creditBasedPackedCycle338': miss
+[10:28:08.536] [bmv2] [D] [thread 77] [0.0] [cxt 0] Action entry is creditBasedPackedCycle338 - 
+[10:28:08.536] [bmv2] [T] [thread 77] [0.0] [cxt 0] Action creditBasedPackedCycle338
+[10:28:08.536] [bmv2] [T] [thread 77] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(338) Primitive debug.write(0, standard_metadata.instance_type)
+[10:28:08.536] [bmv2] [T] [thread 77] [0.0] [cxt 0] Wrote register 'MyEgress.debug' at index 0 with value 0
+[10:28:08.536] [bmv2] [T] [thread 77] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(340) Condition "standard_metadata.instance_type == 1" (node_23) is false
+[10:28:08.536] [bmv2] [D] [thread 77] [0.0] [cxt 0] Pipeline 'egress': end
+[10:28:08.536] [bmv2] [D] [thread 77] [0.0] [cxt 0] Deparser 'deparser': start
+[10:28:08.536] [bmv2] [T] [thread 77] [0.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:28:08.536] [bmv2] [D] [thread 77] [0.0] [cxt 0] Updating checksum 'cksum_0'
+[10:28:08.536] [bmv2] [D] [thread 77] [0.0] [cxt 0] Deparsing header 'ethernet'
+[10:28:08.536] [bmv2] [D] [thread 77] [0.0] [cxt 0] Deparsing header 'ipv4'
+[10:28:08.536] [bmv2] [D] [thread 77] [0.0] [cxt 0] Deparser 'deparser': end
+[10:28:08.536] [bmv2] [D] [thread 80] [0.0] [cxt 0] Transmitting packet of size 98 out of port 1
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Processing packet received on port 1
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Parser 'parser': start
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Extracting header 'ethernet'
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Parser state 'start': key is 0101
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] Bytes parsed: 14
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Parser 'parser' entering state 'parse_cup'
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Extracting header 'ipv4'
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Extracting header 'cup'
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Parser state 'parse_cup' has no switch, going to default next state
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] Bytes parsed: 38
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Parser 'parser': end
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Pipeline 'ingress': start
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] Applying table 'tbl_creditBasedPackedCycle157'
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Looking up key:
+
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Table 'tbl_creditBasedPackedCycle157': miss
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Action entry is creditBasedPackedCycle157 - 
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] Action creditBasedPackedCycle157
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(157) Primitive bit<32> sending2Port = 0xFFFFFFFF;
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(254) Primitive bool isNotDroped = true;
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] Applying table 'tbl_creditBasedPackedCycle255'
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Looking up key:
+
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Table 'tbl_creditBasedPackedCycle255': miss
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Action entry is creditBasedPackedCycle255 - 
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] Action creditBasedPackedCycle255
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(255) Primitive switch (hdr.ethernet.etherType
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] Applying table 'switch_0_table'
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Looking up key:
+* scalars.switch_0_key: 0101
+
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Table 'switch_0_table': hit with handle 2
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Dumping entry 2
+Match key:
+* scalars.switch_0_key: EXACT     0101
+Action entry: switch_0_case_1 - 
+
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Action entry is switch_0_case_1 - 
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] Action switch_0_case_1
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] Applying table 'MyIngress.cup_lpm'
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Looking up key:
+* hdr.ipv4.srcAddr    : 0a0a0003
+
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Table 'MyIngress.cup_lpm': hit with handle 0
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Dumping entry 0
+Match key:
+* hdr.ipv4.srcAddr    : LPM       0a0a0000/16
+Action entry: MyIngress.cup_forward - 0,
+
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Action entry is MyIngress.cup_forward - 0,
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] Action MyIngress.cup_forward
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(199) Primitive standard_metadata.egress_spec = port
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(200) Primitive sending2Port = (bit<32>) port
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] Applying table 'tbl_handleCredit'
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Looking up key:
+
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Table 'tbl_handleCredit': miss
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Action entry is MyIngress.handleCredit - 
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] Action MyIngress.handleCredit
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(231) Primitive (bit<32>) standard_metadata.ingress_port
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(231) Primitive ingressCreditCard.write((bit<32>) standard_metadata.ingress_port, hdr.cup.creditValue)
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] Wrote register 'ingressCreditCard' at index 1 with value 10000
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(262) Condition "isNotDroped" (node_11) is true
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] Applying table 'tbl_creditBasedPackedCycle263'
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Looking up key:
+
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Table 'tbl_creditBasedPackedCycle263': miss
+[10:28:08.537] [bmv2] [D] [thread 75] [1.0] [cxt 0] Action entry is creditBasedPackedCycle263 - 
+[10:28:08.537] [bmv2] [T] [thread 75] [1.0] [cxt 0] Action creditBasedPackedCyc[10:40:05.920] [bmv2] [D] [thread 107] Set default default entry for table 'tbl_creditBasedPackedCycle157': creditBasedPackedCycle157 - 
+[10:40:05.920] [bmv2] [D] [thread 107] Set default default entry for table 'tbl_creditBasedPackedCycle255': creditBasedPackedCycle255 - 
+[10:40:05.920] [bmv2] [D] [thread 107] Set default default entry for table 'switch_0_table': switch_0_case_2 - 
+[10:40:05.920] [bmv2] [D] [thread 107] Entry 0 added to table 'switch_0_table'
+[10:40:05.920] [bmv2] [D] [thread 107] Dumping entry 0
+Match key:
+* scalars.switch_0_key: EXACT     0806
+Action entry: switch_0_case - 
+
+[10:40:05.920] [bmv2] [D] [thread 107] Entry 1 added to table 'switch_0_table'
+[10:40:05.920] [bmv2] [D] [thread 107] Dumping entry 1
+Match key:
+* scalars.switch_0_key: EXACT     0800
+Action entry: switch_0_case_0 - 
+
+[10:40:05.920] [bmv2] [D] [thread 107] Entry 2 added to table 'switch_0_table'
+[10:40:05.920] [bmv2] [D] [thread 107] Dumping entry 2
+Match key:
+* scalars.switch_0_key: EXACT     0101
+Action entry: switch_0_case_1 - 
+
+[10:40:05.920] [bmv2] [D] [thread 107] Set default default entry for table 'MyIngress.mac_lpm': MyIngress.drop - 
+[10:40:05.920] [bmv2] [D] [thread 107] Set default default entry for table 'MyIngress.ipv4_lpm': MyIngress.drop - 
+[10:40:05.920] [bmv2] [D] [thread 107] Set default default entry for table 'MyIngress.cup_lpm': MyIngress.drop - 
+[10:40:05.920] [bmv2] [D] [thread 107] Set default default entry for table 'tbl_handleCredit': MyIngress.handleCredit - 
+[10:40:05.920] [bmv2] [D] [thread 107] Set default default entry for table 'tbl_drop': MyIngress.drop - 
+[10:40:05.920] [bmv2] [D] [thread 107] Set default default entry for table 'tbl_creditBasedPackedCycle259': creditBasedPackedCycle259 - 
+[10:40:05.920] [bmv2] [D] [thread 107] Set default default entry for table 'tbl_creditBasedPackedCycle263': creditBasedPackedCycle263 - 
+[10:40:05.920] [bmv2] [D] [thread 107] Set default default entry for table 'tbl_reduce_credit': MyIngress.reduce_credit - 
+[10:40:05.920] [bmv2] [D] [thread 107] Set default default entry for table 'tbl_reduceLeftOver': MyIngress.reduceLeftOver - 
+[10:40:05.920] [bmv2] [D] [thread 107] Set default default entry for table 'tbl_creditBasedPackedCycle269': creditBasedPackedCycle269 - 
+[10:40:05.920] [bmv2] [D] [thread 107] Set default default entry for table 'tbl_drop_0': MyIngress.drop - 
+[10:40:05.921] [bmv2] [D] [thread 107] Set default default entry for table 'tbl_updateQueueDepth': MyEgress.updateQueueDepth - 
+[10:40:05.921] [bmv2] [D] [thread 107] Set default default entry for table 'tbl_creditBasedPackedCycle338': creditBasedPackedCycle338 - 
+[10:40:05.921] [bmv2] [D] [thread 107] Set default default entry for table 'tbl_creditBasedPackedCycle344': creditBasedPackedCycle344 - 
+[10:40:05.921] [bmv2] [D] [thread 107] Set default default entry for table 'tbl_sendCredits': MyEgress.sendCredits - 
+[10:40:05.921] [bmv2] [D] [thread 107] Set default default entry for table 'tbl_creditBasedPackedCycle349': creditBasedPackedCycle349 - 
+[10:40:05.921] [bmv2] [D] [thread 107] Adding interface eth1 as port 0
+[10:40:05.968] [bmv2] [D] [thread 107] Adding interface eth2 as port 1
+[10:40:06.012] [bmv2] [D] [thread 107] Adding interface eth3 as port 2
+[10:40:06.052] [bmv2] [I] [thread 107] Starting Thrift server on port 9090
+[10:40:06.053] [bmv2] [I] [thread 107] Thrift server was started
+[10:40:35.525] [bmv2] [T] [thread 130] bm_get_config
+[10:40:35.595] [bmv2] [T] [thread 132] bm_get_config
+[10:40:35.667] [bmv2] [T] [thread 134] bm_get_config
+[10:40:35.669] [bmv2] [T] [thread 134] bm_table_add_entry
+[10:40:35.669] [bmv2] [D] [thread 134] Entry 0 added to table 'MyIngress.ipv4_lpm'
+[10:40:35.669] [bmv2] [D] [thread 134] Dumping entry 0
+Match key:
+* hdr.ipv4.dstAddr    : LPM       0d0d0000/16
+Action entry: MyIngress.ipv4_forward - 1,
+
+[10:40:35.739] [bmv2] [T] [thread 136] bm_get_config
+[10:40:35.741] [bmv2] [T] [thread 136] bm_table_add_entry
+[10:40:35.741] [bmv2] [D] [thread 136] Entry 1 added to table 'MyIngress.ipv4_lpm'
+[10:40:35.741] [bmv2] [D] [thread 136] Dumping entry 1
+Match key:
+* hdr.ipv4.dstAddr    : LPM       0a0a0000/16
+Action entry: MyIngress.ipv4_forward - 0,
+
+[10:40:35.809] [bmv2] [T] [thread 138] bm_get_config
+[10:40:35.811] [bmv2] [T] [thread 138] bm_table_add_entry
+[10:40:35.811] [bmv2] [D] [thread 138] Entry 0 added to table 'MyIngress.cup_lpm'
+[10:40:35.811] [bmv2] [D] [thread 138] Dumping entry 0
+Match key:
+* hdr.ipv4.srcAddr    : LPM       0a0a0000/16
+Action entry: MyIngress.cup_forward - 0,
+
+[10:40:35.879] [bmv2] [T] [thread 140] bm_get_config
+[10:40:35.881] [bmv2] [T] [thread 140] mirroring_sesssion_add
+[10:40:35.949] [bmv2] [T] [thread 142] bm_get_config
+[10:40:35.951] [bmv2] [T] [thread 142] bm_register_write
+[10:40:36.018] [bmv2] [T] [thread 144] bm_get_config
+[10:40:36.020] [bmv2] [T] [thread 144] bm_register_write
+[10:40:40.232] [bmv2] [D] [thread 113] [0.0] [cxt 0] Processing packet received on port 0
+[10:40:40.232] [bmv2] [D] [thread 113] [0.0] [cxt 0] Parser 'parser': start
+[10:40:40.232] [bmv2] [D] [thread 113] [0.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:40:40.232] [bmv2] [D] [thread 113] [0.0] [cxt 0] Extracting header 'ethernet'
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Parser state 'start': key is 0800
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Bytes parsed: 14
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Parser 'parser' entering state 'parse_ipv4'
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Extracting header 'ipv4'
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Parser state 'parse_ipv4' has no switch, going to default next state
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Bytes parsed: 34
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Parser 'parser': end
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Pipeline 'ingress': start
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Applying table 'tbl_creditBasedPackedCycle157'
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Looking up key:
+
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Table 'tbl_creditBasedPackedCycle157': miss
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Action entry is creditBasedPackedCycle157 - 
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Action creditBasedPackedCycle157
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(157) Primitive bit<32> sending2Port = 0xFFFFFFFF;
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(254) Primitive bool isNotDroped = true;
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Applying table 'tbl_creditBasedPackedCycle255'
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Looking up key:
+
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Table 'tbl_creditBasedPackedCycle255': miss
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Action entry is creditBasedPackedCycle255 - 
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Action creditBasedPackedCycle255
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(255) Primitive switch (hdr.ethernet.etherType
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Applying table 'switch_0_table'
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Looking up key:
+* scalars.switch_0_key: 0800
+
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Table 'switch_0_table': hit with handle 1
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Dumping entry 1
+Match key:
+* scalars.switch_0_key: EXACT     0800
+Action entry: switch_0_case_0 - 
+
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Action entry is switch_0_case_0 - 
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Action switch_0_case_0
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Applying table 'MyIngress.ipv4_lpm'
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Looking up key:
+* hdr.ipv4.dstAddr    : 0d0d0003
+
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Table 'MyIngress.ipv4_lpm': hit with handle 0
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Dumping entry 0
+Match key:
+* hdr.ipv4.dstAddr    : LPM       0d0d0000/16
+Action entry: MyIngress.ipv4_forward - 1,
+
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Action entry is MyIngress.ipv4_forward - 1,
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Action MyIngress.ipv4_forward
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(164) Primitive standard_metadata.egress_spec = port
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(165) Primitive sending2Port = (bit<32>) port
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(262) Condition "isNotDroped" (node_11) is true
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Applying table 'tbl_creditBasedPackedCycle263'
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Looking up key:
+
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Table 'tbl_creditBasedPackedCycle263': miss
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Action entry is creditBasedPackedCycle263 - 
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Action creditBasedPackedCycle263
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(263) Primitive debug.write(0, standard_metadata.instance_type)
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Wrote register 'MyIngress.debug' at index 0 with value 0
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(265) Primitive ingressCreditCard.read(balence, sending2Port)
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Read register 'ingressCreditCard' at index 1 read value 1
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(266) Condition "balence > 0 && !hdr.cup.isValid()" (node_13) is true
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(274) Condition "hdr.cup.isValid()" (node_14) is false
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Applying table 'tbl_reduce_credit'
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Looking up key:
+
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Table 'tbl_reduce_credit': miss
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Action entry is MyIngress.reduce_credit - 
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Action MyIngress.reduce_credit
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(237) Primitive ingressCreditCard.read(balence, port)
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Read register 'ingressCreditCard' at index 1 read value 1
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(239) Primitive balence = balence - 1
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(240) Primitive ingressCreditCard.write(port, balence)
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Wrote register 'ingressCreditCard' at index 1 with value 0
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Applying table 'tbl_reduceLeftOver'
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Looking up key:
+
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Table 'tbl_reduceLeftOver': miss
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Action entry is MyIngress.reduceLeftOver - 
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Action MyIngress.reduceLeftOver
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(219) Primitive port
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(219) Primitive leftOverCreditCard.read(balence, port)
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Read register 'leftOverCreditCard' at index 0 read value 1
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(220) Primitive balence = balence - 1
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(222) Primitive port
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(222) Primitive leftOverCreditCard.write(port, balence)
+[10:40:40.233] [bmv2] [T] [thread 113] [0.0] [cxt 0] Wrote register 'leftOverCreditCard' at index 0 with value 0
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Pipeline 'ingress': end
+[10:40:40.233] [bmv2] [D] [thread 113] [0.0] [cxt 0] Egress port is 1
+[10:40:40.233] [bmv2] [D] [thread 115] [0.0] [cxt 0] Pipeline 'egress': start
+[10:40:40.233] [bmv2] [T] [thread 115] [0.0] [cxt 0] Applying table 'tbl_updateQueueDepth'
+[10:40:40.233] [bmv2] [D] [thread 115] [0.0] [cxt 0] Looking up key:
+
+[10:40:40.233] [bmv2] [D] [thread 115] [0.0] [cxt 0] Table 'tbl_updateQueueDepth': miss
+[10:40:40.233] [bmv2] [D] [thread 115] [0.0] [cxt 0] Action entry is MyEgress.updateQueueDepth - 
+[10:40:40.233] [bmv2] [T] [thread 115] [0.0] [cxt 0] Action MyEgress.updateQueueDepth
+[10:40:40.233] [bmv2] [T] [thread 115] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(323) Primitive (bit<32>) port
+[10:40:40.233] [bmv2] [T] [thread 115] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(323) Primitive egressDequeueDepth.write((bit<32>) port, standard_metadata.deq_qdepth)
+[10:40:40.233] [bmv2] [T] [thread 115] [0.0] [cxt 0] Wrote register 'egressDequeueDepth' at index 1 with value 0
+[10:40:40.233] [bmv2] [T] [thread 115] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(324) Primitive (bit<32>) port
+[10:40:40.233] [bmv2] [T] [thread 115] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(324) Primitive egressEnqueueDepth.write((bit<32>) port, standard_metadata.enq_qdepth)
+[10:40:40.233] [bmv2] [T] [thread 115] [0.0] [cxt 0] Wrote register 'egressEnqueueDepth' at index 1 with value 0
+[10:40:40.233] [bmv2] [T] [thread 115] [0.0] [cxt 0] Applying table 'tbl_creditBasedPackedCycle338'
+[10:40:40.233] [bmv2] [D] [thread 115] [0.0] [cxt 0] Looking up key:
+
+[10:40:40.233] [bmv2] [D] [thread 115] [0.0] [cxt 0] Table 'tbl_creditBasedPackedCycle338': miss
+[10:40:40.233] [bmv2] [D] [thread 115] [0.0] [cxt 0] Action entry is creditBasedPackedCycle338 - 
+[10:40:40.233] [bmv2] [T] [thread 115] [0.0] [cxt 0] Action creditBasedPackedCycle338
+[10:40:40.233] [bmv2] [T] [thread 115] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(338) Primitive debug.write(0, standard_metadata.instance_type)
+[10:40:40.233] [bmv2] [T] [thread 115] [0.0] [cxt 0] Wrote register 'MyEgress.debug' at index 0 with value 0
+[10:40:40.233] [bmv2] [T] [thread 115] [0.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(340) Condition "standard_metadata.instance_type == 1" (node_23) is false
+[10:40:40.233] [bmv2] [D] [thread 115] [0.0] [cxt 0] Pipeline 'egress': end
+[10:40:40.233] [bmv2] [D] [thread 115] [0.0] [cxt 0] Deparser 'deparser': start
+[10:40:40.233] [bmv2] [T] [thread 115] [0.0] [cxt 0] Skipping checksum 'cksum' update because condition not met
+[10:40:40.233] [bmv2] [D] [thread 115] [0.0] [cxt 0] Updating checksum 'cksum_0'
+[10:40:40.233] [bmv2] [D] [thread 115] [0.0] [cxt 0] Deparsing header 'ethernet'
+[10:40:40.233] [bmv2] [D] [thread 115] [0.0] [cxt 0] Deparsing header 'ipv4'
+[10:40:40.233] [bmv2] [D] [thread 115] [0.0] [cxt 0] Deparser 'deparser': end
+[10:40:40.234] [bmv2] [D] [thread 118] [0.0] [cxt 0] Transmitting packet of size 98 out of port 1
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Processing packet received on port 1
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Parser 'parser': start
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Parser 'parser' entering state 'start'
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Extracting header 'ethernet'
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Parser state 'start': key is 0101
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] Bytes parsed: 14
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Parser 'parser' entering state 'parse_cup'
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Extracting header 'ipv4'
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Extracting header 'cup'
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Parser state 'parse_cup' has no switch, going to default next state
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] Bytes parsed: 38
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Parser 'parser': end
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Pipeline 'ingress': start
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] Applying table 'tbl_creditBasedPackedCycle157'
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Looking up key:
+
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Table 'tbl_creditBasedPackedCycle157': miss
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Action entry is creditBasedPackedCycle157 - 
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] Action creditBasedPackedCycle157
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(157) Primitive bit<32> sending2Port = 0xFFFFFFFF;
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(254) Primitive bool isNotDroped = true;
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] Applying table 'tbl_creditBasedPackedCycle255'
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Looking up key:
+
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Table 'tbl_creditBasedPackedCycle255': miss
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Action entry is creditBasedPackedCycle255 - 
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] Action creditBasedPackedCycle255
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(255) Primitive switch (hdr.ethernet.etherType
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] Applying table 'switch_0_table'
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Looking up key:
+* scalars.switch_0_key: 0101
+
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Table 'switch_0_table': hit with handle 2
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Dumping entry 2
+Match key:
+* scalars.switch_0_key: EXACT     0101
+Action entry: switch_0_case_1 - 
+
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Action entry is switch_0_case_1 - 
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] Action switch_0_case_1
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] Applying table 'MyIngress.cup_lpm'
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Looking up key:
+* hdr.ipv4.srcAddr    : 0a0a0003
+
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Table 'MyIngress.cup_lpm': hit with handle 0
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Dumping entry 0
+Match key:
+* hdr.ipv4.srcAddr    : LPM       0a0a0000/16
+Action entry: MyIngress.cup_forward - 0,
+
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Action entry is MyIngress.cup_forward - 0,
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] Action MyIngress.cup_forward
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(199) Primitive standard_metadata.egress_spec = port
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(200) Primitive sending2Port = (bit<32>) port
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] Applying table 'tbl_handleCredit'
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Looking up key:
+
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Table 'tbl_handleCredit': miss
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Action entry is MyIngress.handleCredit - 
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] Action MyIngress.handleCredit
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(231) Primitive (bit<32>) standard_metadata.ingress_port
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(231) Primitive ingressCreditCard.write((bit<32>) standard_metadata.ingress_port, hdr.cup.creditValue)
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] Wrote register 'ingressCreditCard' at index 1 with value 10000
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] /p4c/creditBasedPackedCycle.p4(262) Condition "isNotDroped" (node_11) is true
+[10:40:40.235] [bmv2] [T] [thread 113] [1.0] [cxt 0] Applying table 'tbl_creditBasedPackedCycle263'
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Looking up key:
+
+[10:40:40.235] [bmv2] [D] [thread 113] [1.0] [cxt 0] Table 'tbl_creditBasedPac

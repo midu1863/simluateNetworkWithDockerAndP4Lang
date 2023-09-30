@@ -85,7 +85,7 @@ struct headers {
     cup_t       cup;
 }
 
-register<bit<32>>(maxPorts)     ingressCreditCard; /*if it's dont sent if it's 0xffffffff send through until n3 buffer is full then go back to credit based*/
+register<bit<32>>(65535)     ingressCreditCard; /*if it's dont sent if it's 0xffffffff send through until n3 buffer is full then go back to credit based*/
 register<bit<32>>(maxPorts)     leftOverCreditCard;
 register<bit<19>>(maxPorts)     egressDequeueDepth;
 register<bit<19>>(maxPorts)     egressEnqueueDepth;
@@ -195,7 +195,27 @@ control MyIngress(inout headers hdr,
         default_action = drop();
     }
 
-     action reduceLeftOver(bit<32> port) {
+     action cup_forward(egressSpec_t port) {
+        standard_metadata.egress_spec = port;
+        sending2Port = (bit<32>) port;
+    }
+
+    table cup_lpm {
+        key = {
+            hdr.ipv4.srcAddr: lpm;
+        }
+        actions = {
+            cup_forward;
+            drop;
+            NoAction;
+        }
+        size = 1024;
+        default_action = drop();
+    }
+
+
+
+    action reduceLeftOver(bit<32> port) {
         creditValue_t balence = 0;
         leftOverCreditCard.read(balence, port);
         balence = balence - 1;
@@ -209,16 +229,18 @@ control MyIngress(inout headers hdr,
     }
 
     action handleCredit() {
-        ingressCreditCard.write((bit<32>) standard_metadata.ingress_port, hdr.cup.creditValue);
+        bit<16> subnet = hdr.ipv4.dstAddr[31:16];
+        ingressCreditCard.write( (bit<32>)subnet, hdr.cup.creditValue);
     }
 
 
-    action reduce_credit(bit<32> port) {
+    action reduce_credit() {
+        bit<16> subnet = hdr.ipv4.dstAddr[31:16];
         creditValue_t balence = 0;
-        ingressCreditCard.read(balence, port);
+        ingressCreditCard.read(balence, (bit<32>)subnet);
 
         balence = balence - 1;
-        ingressCreditCard.write(port, balence);
+        ingressCreditCard.write((bit<32>)subnet, balence);
     }
 
     action sendCredits(creditValue_t creditBalance) {
@@ -236,23 +258,28 @@ control MyIngress(inout headers hdr,
           switch (hdr.ethernet.etherType) {
             TYPE_ARP    : {mac_lpm.apply();}
             TYPE_IPV4   : {ipv4_lpm.apply();}
-            TYPE_CUP    : {handleCredit();}
+            TYPE_CUP    : {cup_lpm.apply(); handleCredit();}
             default     : {drop(); isNotDroped = false;}
         }
 
         if (isNotDroped) {
             debug.write(0, standard_metadata.instance_type);
             creditValue_t balence = 0;
-            ingressCreditCard.read(balence, sending2Port);
-            if (!(balence > 0 && !hdr.cup.isValid()) ) {
-                drop();
-            } else {
-                if (!hdr.cup.isValid()) {
-                    reduce_credit(sending2Port);
+            bit<16> subnet = hdr.ipv4.dstAddr[31:16];
+            ingressCreditCard.read(balence, (bit<32>) subnet);
+            if (!hdr.cup.isValid()) {
+                if (!(balence > 0) ) {
+                    drop();
+                } else {
+                    if (!hdr.cup.isValid()) {
+                        reduce_credit();
+                        //reduceLeftOver((bit<32>)standard_metadata.ingress_port); it take the credit of sw2, i dont need to send
+                    }
                 }
-                reduceLeftOver((bit<32>)standard_metadata.ingress_port);
             }
 
+
+            /*
             creditValue_t leftOverCredit = 0;
             leftOverCreditCard.read(leftOverCredit, (bit<32>)standard_metadata.ingress_port);
 
@@ -261,8 +288,9 @@ control MyIngress(inout headers hdr,
                 debug.write(2, port);
                 sendMirrorCup(port + 1);
 
-                leftOverCreditCard.write((bit<32>)standard_metadata.ingress_port, 1000);
+                leftOverCreditCard.write((bit<32>)standard_metadata.ingress_port, 10000);
             }
+            */
         }
     }
 }
@@ -307,7 +335,7 @@ control MyEgress(inout headers hdr,
     apply {
         updateQueueDepth();
         debug.write(0, standard_metadata.instance_type);
-
+        /*
         if (standard_metadata.instance_type == 1) {
             //check to send new credits
             //using leftOverCreditCard and egressDequeueDepth
@@ -320,6 +348,7 @@ control MyEgress(inout headers hdr,
             truncate((bit<32>) 38);
 
         }
+        */
     }
 
 }

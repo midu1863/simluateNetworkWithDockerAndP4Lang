@@ -940,7 +940,7 @@ struct headers {
     cup_t cup;
 }
 
-register<bit<32>>(maxPorts) leftOverCreditCard;
+register<bit<32>>(65535) leftOverCreditCard;
 register<bit<19>>(maxPorts) egressDequeueDepth;
 register<bit<19>>(maxPorts) egressEnqueueDepth;
 
@@ -1046,18 +1046,18 @@ control MyIngress(inout headers hdr,
         default_action = drop();
     }
 
-     action reduceLeftOver(bit<32> port) {
+     action reduceLeftOver() {
         creditValue_t balence = 0;
-        leftOverCreditCard.read(balence, port);
+        bit<16> subnet = hdr.ipv4.dstAddr[31:16];
+        leftOverCreditCard.read(balence, (bit<32>) subnet);
         balence = balence - 1;
 
-        leftOverCreditCard.write(port, balence);
+        leftOverCreditCard.write((bit<32>) subnet, balence);
     }
 
 
     action sendMirrorCup(bit<32> sendTo) {
         clone(CloneType.I2E, sendTo);
-
     }
 
     apply {
@@ -1070,12 +1070,13 @@ control MyIngress(inout headers hdr,
         }
 
         if(isNotDroped) {
+            bit<16> subnet = hdr.ipv4.dstAddr[31:16];
             creditValue_t leftOver = 0;
-            leftOverCreditCard.read(leftOver,(bit<32>) standard_metadata.ingress_port);
-            reduceLeftOver((bit<32>)standard_metadata.ingress_port);
+            leftOverCreditCard.read(leftOver, (bit<32>)subnet);
+            reduceLeftOver();
             if (leftOver <= 100) {
                 sendMirrorCup((bit<32>) standard_metadata.ingress_port + 1);
-                leftOverCreditCard.write((bit<32>) standard_metadata.ingress_port, 1000);
+                leftOverCreditCard.write((bit<32>) subnet, 1000);
             }
         }
 
@@ -1173,11 +1174,11 @@ control MyEgress(inout headers hdr,
 
         if (standard_metadata.instance_type == 1) {
             creditValue_t balence = 0;
-            leftOverCreditCard.read(balence, (bit<32>) standard_metadata.egress_port);
+            bit<16> subnet = hdr.ipv4.dstAddr[31:16];
+            leftOverCreditCard.read(balence, (bit<32>) subnet);
 
-
-            bit<32> port = (bit<32> )standard_metadata.ingress_port;
             sendCredits(balence);
+            truncate((bit<32>) 38);
         }
         /*
         if (standard_metadata.egress_port == 1) {

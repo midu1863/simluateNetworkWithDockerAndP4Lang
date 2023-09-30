@@ -21,7 +21,7 @@ EOF
 
 
 simple_switch_CLI << EOF
-register_write ingressCreditCard 1 1
+register_write ingressCreditCard 3341 1
 EOF
 
 

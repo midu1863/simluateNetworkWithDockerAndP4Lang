@@ -84,7 +84,7 @@ struct headers {
     cup_t       cup;
 }
 
-register<bit<32>>(maxPorts)     ingressCreditCard; /*if it's dont sent if it's 0xffffffff send through until n3 buffer is full then go back to credit based*/
+register<bit<32>>(65535)     ingressCreditCard; /*if it's dont sent if it's 0xffffffff send through until n3 buffer is full then go back to credit based*/
 
 
 /*************************************************************************
@@ -149,7 +149,7 @@ control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
 control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
-    register<bit<48>>(10) debug;
+    register<bit<32>>(10) debug;
     bit<32> sending2Port = 0xFFFFFFFF;
 
     action drop() {
@@ -203,38 +203,47 @@ control MyIngress(inout headers hdr,
         ingressCreditCard.write(1, value);
     }
 
-    action reduce_credit(bit<32> port) {
+    action reduce_credit() {
+        bit<16> subnet = hdr.ipv4.dstAddr[31:16];
         creditValue_t balence = 0;
-        ingressCreditCard.read(balence, port);
+        ingressCreditCard.read(balence, (bit<32>) subnet);
 
         balence = balence - 1;
-        ingressCreditCard.write(port, balence);
+        ingressCreditCard.write( (bit<32> )subnet, balence);
     }
 
 
     action handleCredit() {
-        ingressCreditCard.write((bit<32>) standard_metadata.ingress_port, hdr.cup.creditValue);
+        bit<16> subnet = hdr.ipv4.dstAddr[31:16];
+        ingressCreditCard.write((bit<32>) subnet, hdr.cup.creditValue);
     }
 
 
     apply {
+
+        bool isNotDroped = true;
         switch (hdr.ethernet.etherType) {
             TYPE_ARP    : {mac_lpm.apply();}
             TYPE_IPV4   : {ipv4_lpm.apply();}
             TYPE_CUP    : {handleCredit();}
+            default     : {drop(); isNotDroped = false;}
         }
 
+        if(isNotDroped) {
+            bit<16> subnet = hdr.ipv4.dstAddr[31:16];
+            creditValue_t balence = 0;
+            ingressCreditCard.read(balence, (bit<32>) subnet);
 
-        creditValue_t balence = 0;
-        ingressCreditCard.read(balence, sending2Port);
-
-        if (!(balence > 0 && !hdr.cup.isValid()) ) {
-            drop();
-        } else {
             if (!hdr.cup.isValid()) {
-                reduce_credit(sending2Port);
-            }
+                if (!(balence > 0)) {
+                    drop();
+                } else {
+                    if (!hdr.cup.isValid()) {
+                        reduce_credit();
+                    }
 
+                }
+            }
         }
 
     }

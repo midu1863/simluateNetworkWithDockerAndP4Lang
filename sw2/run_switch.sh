@@ -25,9 +25,6 @@ EOF
 
 
 simple_switch_CLI << EOF
-register_write leftOverCreditCard 0 1
+register_write leftOverCreditCard 3341  1
 EOF
 
-simple_switch_CLI << EOF
-register_write leftOverCreditCard 0 1
-EOF
