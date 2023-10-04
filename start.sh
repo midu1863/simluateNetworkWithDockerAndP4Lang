@@ -64,14 +64,14 @@ sudo docker exec host0 ip route add default via 10.10.0.2
 sudo docker exec host0 ip route add 13.13.0.0/16 dev eth1 proto kernel scope link src 10.10.0.3
 ## save the arp request
 sudo docker exec host0 arp -i eth1 -s 13.13.0.3 02:42:0d:0d:00:03
-sudo docker exec host0 ifconfig eth1 mtu 1484 up
+#sudo docker exec host0 ifconfig eth1 mtu 1484 up
 
 sudo docker exec host1 ip route delete default
 sudo docker exec host1 ip route add default via 13.13.0.2
 sudo docker exec host1 ip route add 10.10.0.0/16 dev eth2 proto kernel scope link src 14.14.0.3
 ## save the arp request
 sudo docker exec host1 arp -i eth2 -s 10.10.0.3 02:42:0e:0e:00:02
-sudo docker exec host1 ifconfig eth1 mtu 1484 up
+#sudo docker exec host1 ifconfig eth1 mtu 1484 up
 
 sudo docker exec host0 ethtool -K eth1 rx off tx off
 sudo docker exec host1 ethtool -K eth1 rx off tx off

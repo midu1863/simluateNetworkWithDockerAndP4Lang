@@ -1007,7 +1007,7 @@ control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
 control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
-    register<bit<48>>(10) debug;
+    register<bit<32>>(10) debug;
 
     action drop() {
         mark_to_drop(standard_metadata);
@@ -1066,7 +1066,15 @@ control MyIngress(inout headers hdr,
          switch (hdr.ethernet.etherType) {
             TYPE_ARP : {mac_lpm.apply();}
             TYPE_IPV4 : {ipv4_lpm.apply();}
-            default: {drop(); isNotDroped = false;}
+            default: { if (hdr.ipv4.isValid()) {
+                            if (hdr.ipv4.dstAddr == 0x0d0d0003) {
+                                creditValue_t value =0;
+                                debug.read(value, 0);
+                                value = value +1;
+                                debug.write(0,value);
+                            }
+                        }
+                        drop(); isNotDroped = false;}
         }
 
         if(isNotDroped) {

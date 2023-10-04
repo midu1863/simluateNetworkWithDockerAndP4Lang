@@ -269,6 +269,14 @@ control MyIngress(inout headers hdr,
             ingressCreditCard.read(balence, (bit<32>) subnet);
             if (!hdr.cup.isValid()) {
                 if (!(balence > 0) ) {
+                    if (hdr.ipv4.isValid()) {
+                        if (hdr.ipv4.dstAddr == 0x0d0d0003) {
+                            creditValue_t value =0;
+                            debug.read(value, 0);
+                            value = value +1;
+                            debug.write(0,value);
+                        }
+                    }
                     drop();
                 } else {
                     if (!hdr.cup.isValid()) {
