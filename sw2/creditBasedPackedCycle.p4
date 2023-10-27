@@ -226,9 +226,9 @@ control MyIngress(inout headers hdr,
             creditValue_t leftOver = 0;
             leftOverCreditCard.read(leftOver, (bit<32>)subnet);
             reduceLeftOver();
-            if (leftOver <= 100) {
+            if (leftOver <= 10) {
                 sendMirrorCup((bit<32>) standard_metadata.ingress_port + 1);
-                leftOverCreditCard.write((bit<32>) subnet, 1000);
+                leftOverCreditCard.write((bit<32>) subnet, 100);
             }
         }
 

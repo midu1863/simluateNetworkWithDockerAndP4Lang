@@ -1347,14 +1347,14 @@
             },
             {
               "type" : "hexstr",
-              "value" : "0x000003e8"
+              "value" : "0x00000064"
             }
           ],
           "source_info" : {
             "filename" : "/p4c/creditBasedPackedCycle.p4",
             "line" : 231,
             "column" : 16,
-            "source_fragment" : "leftOverCreditCard.write((bit<32>) subnet, 1000)"
+            "source_fragment" : "leftOverCreditCard.write((bit<32>) subnet, 100)"
           }
         }
       ]
@@ -2146,7 +2146,7 @@
             "filename" : "/p4c/creditBasedPackedCycle.p4",
             "line" : 231,
             "column" : 16,
-            "source_fragment" : "leftOverCreditCard.write((bit<32>) subnet, 1000)"
+            "source_fragment" : "leftOverCreditCard.write((bit<32>) subnet, 100)"
           },
           "key" : [],
           "match_type" : "exact",
@@ -2250,7 +2250,7 @@
             "filename" : "/p4c/creditBasedPackedCycle.p4",
             "line" : 229,
             "column" : 16,
-            "source_fragment" : "leftOver <= 100"
+            "source_fragment" : "leftOver <= 10"
           },
           "expression" : {
             "type" : "expression",
@@ -2262,7 +2262,7 @@
               },
               "right" : {
                 "type" : "hexstr",
-                "value" : "0x00000064"
+                "value" : "0x0000000a"
               }
             }
           },

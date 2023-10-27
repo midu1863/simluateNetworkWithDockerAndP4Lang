@@ -94,3 +94,15 @@ sudo docker exec host1 ethtool -K eth1 rx off tx off
 sudo docker exec sw0 sh /p4c/run_switch.sh $1
 sudo docker exec sw1 sh /p4c/run_switch.sh $1
 sudo docker exec sw2 sh /p4c/run_switch.sh $1
+
+
+# adding bottleneck
+##sw 0
+#sudo docker exec sw1 tc qdisc add dev eth1 root tbf rate 1gbit limit 1000 burst 1500
+#sudo docker exec sw1 tc qdisc add dev eth2 root tbf rate 1gbit limit 1000 burst 1500
+## sw1
+#sudo docker exec sw1 tc qdisc add dev eth1 root tbf rate 1gbit limit 1000 burst 1500
+#sudo docker exec sw1 tc qdisc add dev eth2 root tbf rate 50mbit limit 1000 burst 1500
+
+##sw2
+#sudo docker exec sw2 tc qdisc add dev eth1 root tbf rate 50mbit limit 1000 burst 1500

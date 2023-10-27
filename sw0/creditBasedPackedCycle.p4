@@ -225,7 +225,7 @@ control MyIngress(inout headers hdr,
         switch (hdr.ethernet.etherType) {
             TYPE_ARP    : {mac_lpm.apply();}
             TYPE_IPV4   : {ipv4_lpm.apply();}
-            TYPE_CUP    : {handleCredit();}
+            TYPE_CUP    : {handleCredit();isNotDroped = false;}
             default     : {drop(); isNotDroped = false;}
         }
 
